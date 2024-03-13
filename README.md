@@ -1,4 +1,8 @@
 # PROYECTO 1: SISTEMA DE ARCHIVOS DISTRIBUIDOS
+### Integrantes:
+* Julián David Valencia Restrepo.
+* Hobarlan Uparela Arroyo.
+* Andrés Prada Rodríguez.
 ## Marco teórico de los sistemas distribuidos de archivos por bloques y por objetos.
 ### Introducción
 En la era actual de la informática, los sistemas distribuidos de archivos han sido cruciales por su capacidad para manejar datos eficientes y confiablemente. En un mundo donde la generación de datos se ha incrementado exponencialmente, gracias a internet y a la proliferación de dispositivos conectados, la necesidad de sistemas capaces de almacenar, procesar y recuperar grandes volúmenes de información es más crítica que nunca. Los sistemas distribuidos de archivos, como Google File System (GFS) y Hadoop Distributed File System (HDFS), son ejemplos sobresalientes de esta tecnología, proporcionando soluciones robustas para el almacenamiento y manejo de datos en entornos informáticos modernos.
