@@ -72,6 +72,7 @@ Son ideales cuando se necesita almacenar grandes cantidades de datos no estructu
 - **CLI (Interfaz de Línea de Comandos)**: Una interfaz de usuario que permite a los usuarios interactuar con el sistema operativo o so
 ---
 ## Arquitectura
+![ArquitecturaProyecto1](https://github.com/huparelaa/proyecto1-telematica/assets/81880485/03f2f639-53b2-454b-94f5-2f2f528bef76)
 
 ### 1. **Cliente <-> NameNode**: 
  El cliente realiza una petición por medio de API REST al NameNode para poder obtener las direcciones en donde se encuentran los DataNodes para poder escribir un archivo, o para obtener las distintas particiones que puede tener un archivo.
