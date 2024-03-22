@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>List Files</title>
+    </head>
+
+    <body>
+        <h1> FILE SHARING SYSTEM </h1> 
+        <h2> Subir Archivo </h2>
+        <form action="/upload_grpc/" method="post" enctype="multipart/form-data">
+            <label for="file">Seleccionar Archivo:</label>
+            <input type="file" name="file" id="file" required>
+            <br>
+            <button type="submit">Subir Archivo</button>
+        </form>
+
+        <h2> Descargar archivos </h2>
+        <form action="/download_grpc/" method="post" enctype=""> 
+            <label for="file_name"> Escribe el nombre de un archivo: </label>
+            <input type="text" name="file_name" id="file_name" required> 
+            <br>
+            <button type="submit">Descargar Archivo</button>  
+        </form>
+        <div> 
+            <h3> Archivos que puedes descargar: </h3>
+            <ul> 
+                {% for file in file_list %}
+                    <li><a href="/files/{{file}}" download> {{file}} </a></li>
+                {% endfor %}
+            </ul>
+        </diV>
+    <body> 
+</html>
