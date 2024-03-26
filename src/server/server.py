@@ -5,13 +5,13 @@ import concurrent.futures
 
 class FileTransferServicer(filetransfer_pb2_grpc.FileTransferServicer):
     def UploadFile(self, request, context):
-        with open(f"../../files/{request.name}", "wb") as f: 
+        with open(f"./files/{request.name}", "wb") as f: 
             f.write(request.content)
         return filetransfer_pb2.UploadResponse(success=True)
     
     def DownloadFile(self, request, context):
         file_content = b''
-        with open(f"../../files/{request.name}", 'rb') as f:
+        with open(f"./files/{request.name}", 'rb') as f:
             file_content = f.read()
         return filetransfer_pb2.FileChunk(name=request.name, content=file_content)
 
