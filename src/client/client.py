@@ -42,7 +42,7 @@ def download_file_with_grpc(file_name):
     with grpc.insecure_channel("localhost:50051") as channel: 
         stub = filetransfer_pb2_grpc.FileTransferStub(channel)
         response = stub.DownloadFile(filetransfer_pb2.Request(name=file_name))
-        return response 
+        return response     
 
 @app.post("/upload_grpc/")
 async def upload_file_grpc(file: UploadFile = File(...)):
@@ -50,6 +50,7 @@ async def upload_file_grpc(file: UploadFile = File(...)):
     print("-----------------------------")
     print(fileName) 
     print("-----------------------------")
+    file
     content = await file.read()
     start_time = time.time()
     success = upload_file_with_grpc(fileName, content)
@@ -58,7 +59,23 @@ async def upload_file_grpc(file: UploadFile = File(...)):
         return {"message": f"File {file.filename} has been uploaded."}
     else:
         return {"message": "Failed to upload the file."}
-    
+
+"""
+Escribir archivos
+
+1. Subir el archivo.
+2. Hacer un split del archivo como tal.
+3. Mandar una petición al NameNode para pedir a que DataNodes enviar los archivos.
+4. 
+
+"""
+
+
+"""
+Leer archivos
+
+"""
+
 @app.post("/download_grpc/")
 async def download_file_grpc(file_name: str = Form(...)): 
     print(file_name)
