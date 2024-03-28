@@ -29,5 +29,16 @@ def cd(my_route, directory):
     if directory == "..":
         return "/".join(my_route.split("/")[:-2]) + "/"
     else:
-        return f"{my_route}{directory}/"
-    
+        error_message = "No such file or directory:"
+        new_route = f"{my_route}{directory}"
+        try:
+            response = requests.post(f"{namenode_address()}/cd", json={"route": new_route})
+            response.raise_for_status()
+            # if begins with error_message
+            if response.json()["message"].startswith(error_message):
+                print(response.json()["message"])
+                return my_route
+            return new_route+"/"
+        except requests.exceptions.RequestException as e:
+            print("No such file or directory")
+            return my_route
