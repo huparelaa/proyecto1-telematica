@@ -1,14 +1,14 @@
-from commands.cli_commands import ls, cd
+from commands.cli_commands import ls, cd, mkdir
 import os
 
-AVAILABLE_COMMANDS = ["ls", "mkdir", "cd","clear", "exit"]
+AVAILABLE_COMMANDS = ["ls", "mkdir", "cd","clear", "exit", "help"]
 
 
 def main():
     my_route = "/" # <- Don't change this line
 
     print("Welcome to the Hadoop File System")
-
+    print("Type 'help' to see the available commands")
     while True:
         command = input(f"{my_route}$ ")
         command = command.split(" ")
@@ -22,7 +22,10 @@ def main():
         if command[0] == "ls":
             ls(my_route)
         elif command[0] == "mkdir":
-            print("Creating a directory")
+            if len(command) != 2:
+                print("Usage: mkdir <directory>")
+            else:
+                mkdir(my_route, command[1])
         elif command[0] == "cd":
             if len(command) != 2:
                 print("Usage: cd <directory>")
@@ -32,6 +35,12 @@ def main():
             os.system("clear")
         elif command[0] == "exit":
             break
+        elif command[0] == "help":
+            print("Available commands:")
+            for command in AVAILABLE_COMMANDS:
+                print(f"\t{command}")
+        else:
+            print(f"Command not found {command[0]}")
 
 if __name__ == "__main__":
     main()

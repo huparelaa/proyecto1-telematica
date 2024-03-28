@@ -42,3 +42,11 @@ def cd(my_route, directory):
         except requests.exceptions.RequestException as e:
             print("No such file or directory")
             return my_route
+        
+def mkdir(my_route, directory):
+    try:
+        response = requests.post(f"{namenode_address()}/mkdir", json={"route": f"{my_route}{directory}"})
+        response.raise_for_status()
+        print("Directory created")
+    except requests.exceptions.RequestException as e:
+        print("No such file or directory")
