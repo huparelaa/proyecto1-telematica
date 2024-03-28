@@ -20,7 +20,6 @@ def main():
             continue
 
         if command[0] == "ls":
-            print("Listing files")
             ls(my_route)
         elif command[0] == "mkdir":
             print("Creating a directory")

@@ -19,10 +19,9 @@ def ls(my_route):
         my_route = my_route.replace("/", "%2F")
         response = requests.get(f"{namenode_address()}/ls?route={my_route}")
         response.raise_for_status()
-        if(response.success):
-            print(response.json())
-        else:
-            print("No such file or directory")
+        data=response.json()['directory_content']
+        for file in data:
+            print(file)
     except requests.exceptions.RequestException as e:
         print("No such file or directory")
 
