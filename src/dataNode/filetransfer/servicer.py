@@ -9,8 +9,12 @@ load_dotenv()
 
 class FileTransferServicer(filetransfer_pb2_grpc.FileTransferServicer):
     def UploadFile(self, request, context):
+        if not os.path.exists("./files"):
+            os.makedirs("./files")
         try:
-            folder_path = f"./files/{request.name}"
+            partition_token = "-_-part"
+            file_name = request.name.split(partition_token)[0]
+            folder_path = f"./files/{file_name}"
             if not os.path.exists(folder_path):
                 os.makedirs(folder_path)
             file_path = os.path.join(folder_path, request.name)

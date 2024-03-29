@@ -1,7 +1,8 @@
 import os
 from dotenv import load_dotenv
 import requests
-from utils.filemanager import split_file, join_files, delete_splits
+from utils.filemanager import split_file, join_files, delete_splits, send_files_to_datanode
+from connection.nameNodeConn import get_datanode_address
 
 load_dotenv()
 
@@ -53,12 +54,11 @@ def mkdir(my_route, directory):
         print("No such file or directory")
 
 def write(my_route, file_name):
-    # get file to write from ../../uploads
     try:
         split_file(f"../uploads/{file_name}")
-        print("File splitted")
-        # Wait 1 second to ensure that the splits are created
-        #delete_splits()
+        send_files_to_datanode(file_name=file_name, data_node_address=get_datanode_address())
+        delete_splits("uploads")
+        print(f"File {file_name} written")
         
     except FileNotFoundError:
         print("File not found")

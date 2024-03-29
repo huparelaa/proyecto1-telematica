@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package filetransfer;
+
+service FileTransfer {
+  rpc UploadFile(FileChunk) returns (UploadResponse);
+  rpc DownloadFile(Request) returns (FileChunk);
+}
+
+message FileChunk {
+  string name = 1;
+  bytes content = 2;
+}
+
+message Request { 
+    string name = 1;
+}
+
+message UploadResponse {
+  bool success = 1;
+}
