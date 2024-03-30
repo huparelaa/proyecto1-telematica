@@ -34,7 +34,8 @@ class FileTransferServicer(filetransfer_pb2_grpc.FileTransferServicer):
             return filetransfer_pb2.FileChunk(name=request.name, content=b'')
     
 def grpcServer():
-    server = grpc.server(concurrent.futures.ThreadPoolExecutor(max_workers=1))
+    file_size = int(os.getenv("FILE_PART_SIZE"))
+    server = grpc.server(concurrent.futures.ThreadPoolExecutor(max_workers=1),options=[('grpc.max_send_message_length', file_size), ('grpc.max_receive_message_length', file_size)])
     filetransfer_pb2_grpc.add_FileTransferServicer_to_server(FileTransferServicer(), server)
     port = os.getenv("GRPC_PORT")
     server.add_insecure_port(f"[::]:{port}")
