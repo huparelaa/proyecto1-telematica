@@ -1,8 +1,9 @@
 import os
 from dotenv import load_dotenv
 import requests
-from utils.filemanager import split_file, join_files, delete_splits, send_files_to_datanode
+from utils.filemanager import split_file, join_files
 from connection.nameNodeConn import get_datanode_address
+from connection.dataNodeConn import send_files_to_datanode, download_files_from_datanode
 
 load_dotenv()
 
@@ -27,8 +28,10 @@ def ls(my_route):
     except requests.exceptions.RequestException as e:
         print("No such file or directory")
 
-def cd(my_route, directory):
+def cd(my_route, directory, username):
     if directory == "..":
+        if my_route == f"/{username}/":
+            return my_route
         return "/".join(my_route.split("/")[:-2]) + "/"
     else:
         error_message = "No such file or directory:"
@@ -56,8 +59,8 @@ def mkdir(my_route, directory):
 def write(my_route, file_name):
     try:
         split_file(f"../uploads/{file_name}")
-        send_files_to_datanode(file_name=file_name, data_node_address=get_datanode_address())
-        delete_splits("uploads")
+        route = f"{my_route}/{file_name}"
+        send_files_to_datanode(route=route, data_node_address=get_datanode_address())
         print(f"File {file_name} written")
         
     except FileNotFoundError:
@@ -66,9 +69,9 @@ def write(my_route, file_name):
     
 def read(my_route, file_name):
     try:
+        download_files_from_datanode(data_node_address=get_datanode_address(), file_name=file_name)
         join_files(file_name)
-        # Wait 1 second to ensure that the file is joined
-        #delete_splits()
+        print(f"File {file_name} read, check the downloads folder")
     except FileNotFoundError:
         print("File not found")
         return

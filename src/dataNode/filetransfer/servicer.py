@@ -9,28 +9,40 @@ load_dotenv()
 
 class FileTransferServicer(filetransfer_pb2_grpc.FileTransferServicer):
     def UploadFile(self, request, context):
-        if not os.path.exists("./files"):
-            os.makedirs("./files")
         try:
             partition_token = "-_-part"
-            file_name = request.name.split(partition_token)[0]
-            folder_path = f"./files/{file_name}"
+            path_components = request.name.split("/")
+            base_folder = "./files"
+
+            folder_path = os.path.join(base_folder, *path_components[:-1])
+            print(folder_path)
+            
             if not os.path.exists(folder_path):
                 os.makedirs(folder_path)
-            file_path = os.path.join(folder_path, request.name)
-            with open(file_path, "wb") as f: 
+            
+            file_name_with_partition = path_components[-1]
+            file_name = file_name_with_partition.split(partition_token)[0]
+            
+            file_path = os.path.join(folder_path, file_name_with_partition)
+            
+            with open(file_path, "wb") as f:
                 f.write(request.content)
+            
             return filetransfer_pb2.UploadResponse(success=True)
         except Exception as e:
+            print(e)
             return filetransfer_pb2.UploadResponse(success=False, message=str(e))
+
         
     def DownloadFile(self, request, context):
         try:
             file_content = b''
+            print(f"Downloading file {request.name}")
             with open(f"./files/{request.name}", 'rb') as f:
                 file_content = f.read()
             return filetransfer_pb2.FileChunk(name=request.name, content=file_content)
         except Exception as e:
+            print(e)
             return filetransfer_pb2.FileChunk(name=request.name, content=b'')
     
 def grpcServer():

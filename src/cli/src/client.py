@@ -3,9 +3,9 @@ import os
 
 AVAILABLE_COMMANDS = ["ls", "mkdir", "cd","clear", "exit", "help", "write", "read"]
 
-
 def main():
-    my_route = "/" # <- Don't change this line
+    username = input("Enter your username: ")
+    my_route = f"/{username}/"
     os.system("clear")
     print("Welcome to the Hadoop File System")
     print("Type 'help' to see the available commands")
@@ -30,7 +30,7 @@ def main():
             if len(command) != 2:
                 print("Usage: cd <directory>")
             else:
-                my_route = cd(my_route, command[1])
+                my_route = cd(my_route, command[1], username)
         elif command[0] == "clear":
             os.system("clear")
         elif command[0] == "exit":
