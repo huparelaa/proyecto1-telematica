@@ -59,7 +59,7 @@ def mkdir(my_route, directory):
 def write(my_route, file_name):
     try:
         split_file(f"../uploads/{file_name}")
-        route = f"{my_route}/{file_name}"
+        route = f"{my_route}{file_name}/"
         send_files_to_datanode(route=route, data_node_address=get_datanode_address())
         print(f"File {file_name} written")
         

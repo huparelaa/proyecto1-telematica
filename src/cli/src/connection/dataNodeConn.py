@@ -24,7 +24,7 @@ def send_files_to_datanode(data_node_address, route):
         print("No partitions to send")
         return
 
-    file_name = route.split("/")[-1]
+    file_name = route.split("/")[-2]
         
     partitions = sorted(os.listdir(partitions_directory))
     # partition name format: <file_name>-_-part<block_num>

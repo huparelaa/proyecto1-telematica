@@ -4,9 +4,9 @@ import os
 AVAILABLE_COMMANDS = ["ls", "mkdir", "cd","clear", "exit", "help", "write", "read"]
 
 def main():
-    username = input("Enter your username: ")
-    my_route = f"/{username}/"
     os.system("clear")
+    username = login()
+    my_route = f"/{username}/"
     print("Welcome to the Hadoop File System")
     print("Type 'help' to see the available commands")
     while True:
@@ -52,5 +52,17 @@ def main():
         else:
             print(f"Command not found {command[0]}")
 
+def login():
+    username = input("Username: ")
+    try:
+        cd("/", username, username)
+    except Exception as e:
+        mkdir("/", username)
+        cd("/", username, username)
+
+    os.system("clear")
+    return username
+
 if __name__ == "__main__":
     main()
+    

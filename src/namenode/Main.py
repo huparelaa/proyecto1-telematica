@@ -1,7 +1,6 @@
 from NameNode import NameNode
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-
 app = FastAPI()
 nameNode = NameNode()
 
@@ -82,4 +81,4 @@ async def changeDirectory(request: RouteRequest):
     if targetRequest: 
         return { "message": "Change Directory!", "route": request.route }
     else: 
-        return { "message": f"No such file or directory: { request.route }" }
+        return HTTPException(status_code=404, detail="No such file or directory")
