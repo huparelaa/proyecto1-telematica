@@ -39,7 +39,10 @@ def send_files_to_datanode(data_node_address, route):
 
     delete_splits("uploads")
 
-def download_files_from_datanode(data_node_address, file_name):
+def download_files_from_datanode(data_node_address, file_name, file_path):
+    #remove first "/"
+    if file_path[0] == "/":
+        file_path = file_path[1:]
     partitions_directory = "splits/downloads"
     if not os.path.exists(partitions_directory):
         os.makedirs(partitions_directory)
@@ -49,11 +52,11 @@ def download_files_from_datanode(data_node_address, file_name):
     while True:
         formatted_block_num = f"{block_num:04}"
 
-        response = download_file_with_grpc(f"{file_name}/{file_name}{token}{formatted_block_num}", data_node_address)
+        response = download_file_with_grpc(f"{file_path}{file_name}/{file_name}{token}{formatted_block_num}", data_node_address)
         if response.content == b'':
             break
-        partition_path = os.path.join(partitions_directory, f"{file_name}{token}{block_num:04}")
-
+        partition_path = os.path.join(partitions_directory, response.name.split("/")[-1])
+        
         with open(partition_path, 'wb') as partition_file:
             partition_file.write(response.content)
         block_num += 1

@@ -64,12 +64,11 @@ def write(my_route, file_name):
         print(f"File {file_name} written")
         
     except FileNotFoundError:
-        print("File not found")
         return
     
 def read(my_route, file_name):
     try:
-        download_files_from_datanode(data_node_address=get_datanode_address(), file_name=file_name)
+        download_files_from_datanode(data_node_address=get_datanode_address(), file_name=file_name, file_path=my_route)
         join_files(file_name)
         print(f"File {file_name} read, check the downloads folder")
     except FileNotFoundError:

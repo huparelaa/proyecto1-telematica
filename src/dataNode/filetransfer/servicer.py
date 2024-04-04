@@ -15,7 +15,6 @@ class FileTransferServicer(filetransfer_pb2_grpc.FileTransferServicer):
             base_folder = "./files"
 
             folder_path = os.path.join(base_folder, *path_components[:-1])
-            print(folder_path)
             
             if not os.path.exists(folder_path):
                 os.makedirs(folder_path)

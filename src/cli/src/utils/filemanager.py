@@ -28,10 +28,7 @@ def join_files(file_name):
         print("No partitions to join")
         return
     if check_partition_exists(file_name) == False:
-        print("File not found")
         return
-
-    delete_splits("downloads")
 
     partitions = sorted(os.listdir(partitions_directory))
     with open(f"{destination_directory}/{file_name}", 'wb') as file:
@@ -39,6 +36,9 @@ def join_files(file_name):
             partition_path = os.path.join(partitions_directory, partition)
             with open(partition_path, 'rb') as partition_file:
                 file.write(partition_file.read())
+    
+    delete_splits("downloads")
+    
     
 def delete_splits(folder_type):
     if folder_type == "uploads":
