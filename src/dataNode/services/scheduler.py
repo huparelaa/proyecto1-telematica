@@ -16,7 +16,7 @@ def heartBeat(scheduler):
     data = {
         "ip_address": get_my_ip(),
         "port": os.getenv("GRPC_PORT"),
-        "block_list": list_dir("./files"),
+        "block_list": getFilesInfo(),
         "status": "active"
     }
 
@@ -40,3 +40,14 @@ def heartBeat(scheduler):
         print ("OOps: Something Else",err)
         sys.exit(1)
     return "Could not perform the hearBeat operation."
+
+def getFilesInfo():
+    base_dir = "./files"
+    parts_routes = []
+    for root, _, files in os.walk(base_dir):
+        for file in files:
+            if "-_-" in file:
+                # Remove '.files/' from the path
+                path = os.path.join(root, file)[8:]
+                parts_routes.append(path)
+    return parts_routes
