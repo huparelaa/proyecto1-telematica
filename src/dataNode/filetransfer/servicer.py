@@ -4,6 +4,8 @@ import concurrent.futures
 import grpc
 import asyncio
 from grpc.experimental import aio
+import sched, time
+from services.scheduler import heartBeat
 
 import os
 from dotenv import load_dotenv
@@ -28,4 +30,9 @@ async def grpcServer():
     server.add_insecure_port(f"[::]:{port}")
     await server.start()
     print(f"Server gRPC started on port {port}")
+
+    my_scheduler = sched.scheduler(time.time, time.sleep)
+    my_scheduler.enter(5, 1, heartBeat, (my_scheduler,))
+    my_scheduler.run()
+
     await server.wait_for_termination()

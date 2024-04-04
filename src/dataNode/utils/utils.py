@@ -1,4 +1,5 @@
 import socket
+import os
 
 def get_my_ip():
     try:
@@ -9,3 +10,6 @@ def get_my_ip():
         print(f"Error obtaining IP address: {e}")
         ip = None # Fallback to localhost
     return ip
+
+def list_dir(path):
+    return os.listdir(path) 

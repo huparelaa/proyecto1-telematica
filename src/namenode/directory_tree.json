@@ -1,0 +1,39 @@
+{
+    "name": "/",
+    "files": {},
+    "subdirectory": {
+        "txt1": {
+            "name": "txt1",
+            "files": {},
+            "subdirectory": {
+                "lucia": {
+                    "name": "lucia",
+                    "files": {
+                        "la.mp3": {
+                            "route": "/txt1/lucia/la.mp3",
+                            "numReplicas": 1,
+                            "blockId": 
+                        }
+                    },
+                    "subdirectory": {}
+                }
+            }
+        },
+        "txt2": {
+            "name": "txt2",
+            "files": {},
+            "subdirectory": {
+                "hola": {
+                    "name": "hola",
+                    "files": {},
+                    "subdirectory": {}
+                },
+                "hola2": {
+                    "name": "hola2",
+                    "files": {},
+                    "subdirectory": {}
+                }
+            }
+        }
+    }
+}
