@@ -9,7 +9,6 @@ load_dotenv()
 def login():
     my_ip = get_my_ip()
     my_grpc_port = os.getenv("GRPC_PORT")
-    heartbeat_port = os.getenv("HEARTBEAT_PORT")
     nameNode_ip = os.getenv("NAMENODE_IP")
     nameNode_port = os.getenv("NAMENODE_PORT")
 
@@ -18,7 +17,7 @@ def login():
         nameNode_endpoint = f"http://{nameNode_ip}:{nameNode_port}/api/v1/login"
 
         # Datos para enviar en el body del POST request
-        data = {"ip": my_ip, "grpcPort": my_grpc_port, "heartbeatPort": heartbeat_port}
+        data = {"ip": my_ip, "port": my_grpc_port}
 
         try:
             # Realizar la solicitud POST

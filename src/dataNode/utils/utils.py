@@ -12,4 +12,14 @@ def get_my_ip():
     return ip
 
 def list_dir(path):
-    return os.listdir(path) 
+    return os.listdir(path)
+ 
+def get_files_routes():
+    base_directory = "./files"
+    parts_routes = []
+    for root, _, files in os.walk(base_directory):
+        for file in files:
+            if "-_-" in file:  # Identifies the file parts
+                complete_route = os.path.join(root, file)
+                parts_routes.append(complete_route)
+    return parts_routes
