@@ -1,6 +1,7 @@
 import requests
 import os
 from utils.utils import get_my_ip, get_files_info
+from utils.heartbeat import manageHeartbeatResponse
 import sys
 from dotenv import load_dotenv
 load_dotenv()
