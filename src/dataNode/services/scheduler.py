@@ -1,6 +1,6 @@
 import requests
 import os
-from utils.utils import list_dir, get_my_ip
+from utils.utils import get_my_ip, get_files_info
 import sys
 from dotenv import load_dotenv
 load_dotenv()
@@ -15,9 +15,9 @@ def heartBeat(scheduler):
 
     data = {
         "ip_address": get_my_ip(),
-        "port": os.getenv("GRPC_PORT"),
+        "port": str(os.environ.get('PORT', 50051)),
         "available_space": 1000,
-        "block_list": list_dir("./files"),
+        "block_list": get_files_info(),
     }
 
     print(data)
@@ -40,3 +40,4 @@ def heartBeat(scheduler):
         print ("OOps: Something Else",err)
         sys.exit(1)
     return "Could not perform the hearBeat operation."
+

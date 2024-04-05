@@ -3,7 +3,7 @@ from utils.utils import get_my_ip
 import requests
 from dotenv import load_dotenv
 import os
-from utils.utils import get_files_routes
+from utils.utils import get_files_info
 
 load_dotenv()
 
@@ -22,7 +22,8 @@ def handShake():
             "ip_address": my_ip, 
             "port": str(PORT), 
             "available_space": 1000, 
-            "block_list":  get_files_routes() }
+            "block_list":  get_files_info() 
+        }
 
         try:
             # Realizar la solicitud POST
