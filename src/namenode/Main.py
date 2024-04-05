@@ -51,8 +51,9 @@ async def dataNodeHandshake(request: HandShakeRequest):
 
 @app.post("/namenode/api/v1/heartbeat/")
 async def dataNodeHeartbeat(request: HeartbeatRequest):
-    print(request)
-    return request
+
+    return { "message": "Heartbeat datanode succesfully!", "success": True, "command": "replicate", "data_node_ip":"localhost", "data_node_port": "50052", "file_path": "/hobar/ss/r1ck.mp4/r1ck.mp4-_-part0005" }
+
 # File ops
 @app.get("/namenode/api/v1/datanode_read_list/")
 async def getReadFileDataNodes(route: str):
