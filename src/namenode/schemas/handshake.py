@@ -3,6 +3,5 @@ from pydantic import BaseModel
 class HandShakeRequest(BaseModel):
     ip_address: str
     port: str
-    process: str
-    space: str
+    available_space: int
     block_list: list

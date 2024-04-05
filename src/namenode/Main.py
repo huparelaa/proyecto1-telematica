@@ -2,28 +2,11 @@ from NameNode import NameNode
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from schemas.handshake import HandShakeRequest
+from schemas.heartbeat import HeartbeatRequest
 
 app = FastAPI()
 nameNode = NameNode()
-
-nameNode.directoryTree.add_directory("/txt")
-nameNode.directoryTree.add_files("/txt/hola.mp3", "", "")
-nameNode.directoryTree.add_files("/txt/hola1.mp3", "", "")
-nameNode.directoryTree.add_files("/txt/hola2.mp3", "", "")
-nameNode.directoryTree.add_directory("/txt/hola")
-nameNode.directoryTree.add_files("/txt/hola/clo.mp4", "", "")
-nameNode.directoryTree.add_files("/txt/hola/ro.mp3", "", "")
-nameNode.directoryTree.add_files("/txt/hola/cl.mp3", "", "")
-nameNode.directoryTree.add_directory("/txt1")
-nameNode.directoryTree.add_directory("/txt2")
-
-
-
-class HeartbeatRequest(BaseModel):
-    ip_address: str
-    port: str
-    block_list: list
-    status: str
+nameNode.start_heartbeat_checker()
 
 class RouteRequest(BaseModel):
     route: str
@@ -42,18 +25,20 @@ class FileWriteRequest(BaseModel):
 async def dataNodeHandshake(request: HandShakeRequest):
     success = nameNode.createDataNode(request)
     if success: 
-        # Mapeo de bloques
-        nameNode.handShakeBlockMap(request.ip_address, request.block_list)
+        nameNode.updateBlockMap(request.ip_address, request.port, request.block_list)
         return { "message": "HandShake datanode succesfully!", "success": success }
     else: 
-        return { "message": "HandShake datanode failed!", "success": success }
-
-
+        return HTTPException(status_code=404, detail="DataNode already exists")
+    
 @app.post("/namenode/api/v1/heartbeat/")
 async def dataNodeHeartbeat(request: HeartbeatRequest):
-
-    return { "message": "Heartbeat datanode succesfully!", "success": True, "command": "replicate", "data_node_ip":"localhost", "data_node_port": "50052", "file_path": "/hobar/ss/r1ck.mp4/r1ck.mp4-_-part0005" }
-
+    print(request.ip_address, request.port)
+    success = nameNode.heartBeat(request)
+    if success: 
+        return { "message": "HeartBeat datanode succesfully!", "success": success }
+    else:
+        return HTTPException(status_code=404, detail="DataNode does not exist")
+    
 # File ops
 @app.get("/namenode/api/v1/datanode_read_list/")
 async def getReadFileDataNodes(route: str):
