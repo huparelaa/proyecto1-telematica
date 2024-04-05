@@ -16,8 +16,8 @@ def heartBeat(scheduler):
     data = {
         "ip_address": get_my_ip(),
         "port": os.getenv("GRPC_PORT"),
+        "available_space": 1000,
         "block_list": list_dir("./files"),
-        "status": "active"
     }
 
     print(data)

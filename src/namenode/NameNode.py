@@ -1,5 +1,6 @@
 from DirectoryTree import DirectoryTree
 from schemas.handshake import HandShakeRequest
+import json
 
 class NameNode: 
     def __init__(self):
@@ -8,36 +9,34 @@ class NameNode:
         self.activesDataNodes = {}
     
     def createDataNode(self, dataNodeInfo: HandShakeRequest):
-        success = False
         if dataNodeInfo.ip_address not in self.activesDataNodes:
             keyDataNode = dataNodeInfo.ip_address + ":" + dataNodeInfo.port
             self.activesDataNodes[keyDataNode] = { 
                 'ip': dataNodeInfo.ip_address, 
                 'port': dataNodeInfo.port, 
-                'process': dataNodeInfo.process, 
-                'space': dataNodeInfo.space 
+                'available_space': dataNodeInfo.available_space, 
+                'online': True
             }
-            print("Datanodes", self.activesDataNodes)
+            print("Datanodes", json.dumps(self.activesDataNodes, indent=4))
             print("Datanode has been created!")
-            success = True
-            return success 
+            return True
         else:
             print("Datanode has been already created!")
-            return success
+            return False
     
-    def handShakeBlockMap(self, ip, data):
+    def handShakeBlockMap(self, ip_address, port, data):
         for block in data:
-            routeName, part = block.split("-")
+            routeName, part = block.split("-_-")
             if routeName not in self.blockMap:
                 self.blockMap[routeName] = { 
-                    part: [ip]
+                    part: [ip_address + ":" + port]
                 }
             else: 
                 if part not in self.blockMap[routeName]:
-                    self.blockMap[routeName][part] = [ip]
+                    self.blockMap[routeName][part] = [ip_address + ":" + port]
                 else: 
-                    self.blockMap[routeName][part].append(ip)
-            print("BlockMap", self.blockMap)
+                    self.blockMap[routeName][part].append(ip_address + ":" + port)
+        print("BlockMap", json.dumps(self.blockMap, indent=4))
 
     def getReadDataNodes(self, route):
         return self.blockMap[route]

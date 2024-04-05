@@ -43,7 +43,8 @@ async def dataNodeHandshake(request: HandShakeRequest):
     success = nameNode.createDataNode(request)
     if success: 
         # Mapeo de bloques
-        nameNode.handShakeBlockMap(request.ip_address, request.block_list)
+        print(request.block_list)
+        # nameNode.handShakeBlockMap(request.ip_address, request.port, request.block_list)
         return { "message": "HandShake datanode succesfully!", "success": success }
     else: 
         return { "message": "HandShake datanode failed!", "success": success }
