@@ -5,7 +5,6 @@ import json
 import time
 import threading
 
-
 class NameNode: 
     def __init__(self):
         self.directoryTree = DirectoryTree()
@@ -68,6 +67,7 @@ class NameNode:
                 continue
             last_heartbeat = data_node_info.get('last_heartbeat', 0)
             elapsed_time = current_time - last_heartbeat
+            print(f"Elapsed time for Data Node {data_node_id}: {elapsed_time}")
             if elapsed_time > 30:
                 data_node_info['online'] = False
                 print(f"Data Node {data_node_id} is offline")
@@ -91,10 +91,6 @@ class NameNode:
             for part in self.blockMap[route]:
                 if keyDataNode in self.blockMap[route][part]:
                     self.blockMap[route][part].remove(keyDataNode)
-                    print(f"DataNode {keyDataNode} has been deleted from blockMap")
-                else: 
-                    print(f"DataNode {keyDataNode} does not exist in blockMap")
-        print("BlockMap", json.dumps(self.blockMap, indent=4))
 
     def getReadDataNodes(self, route):
         return self.blockMap[route]
@@ -105,8 +101,6 @@ class NameNode:
         for i in range(0, block_num):
             dataNodesToWrite.append(dataNodesAvailable[i])
         return dataNodesToWrite
-    
-
-    
+        
     def searchFileInBlockMap(self, filename):
         pass
