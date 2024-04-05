@@ -2,6 +2,8 @@ from utils.utils import get_my_ip, get_files_info
 from dotenv import load_dotenv
 import requests
 import os
+from utils.utils import get_my_ip, get_files_info
+from utils.heartbeat import manageHeartbeatResponse
 import sys
 
 load_dotenv()
@@ -19,11 +21,14 @@ def heartBeat(scheduler):
         "available_space": 1000,
         "block_list": get_files_info(),
     }
+
+    print(data)
     nameNode_endpoint = f"http://{nameNode_ip}:{nameNode_port}/namenode/api/v1/heartbeat/"
     try:
         response = requests.post(nameNode_endpoint, json=data)
-        response.raise_for_status()
-        return response.json() 
+        response.raise_for_status()  # Esto lanzará un error si la solicitud falla
+        manageHeartbeatResponse(response.json())
+        return response.json()  # Retorna la respuesta del NameNode
     except requests.exceptions.HTTPError as errh:
         print ("Http Error:",errh)
         sys.exit(1)
