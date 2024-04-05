@@ -6,6 +6,8 @@ app = FastAPI()
 nameNode = NameNode()
 nameNode.start_heartbeat_checker()
 
+# Routes for the data nodes
+
 @app.post("/namenode/api/v1/handshake/")
 async def dataNodeHandshake(request: HandShakeRequest):
     success = nameNode.createDataNode(request)
@@ -23,7 +25,9 @@ async def dataNodeHeartbeat(request: HeartbeatRequest):
         return { "message": "HeartBeat datanode succesfully!", "success": success }
     else:
         return HTTPException(status_code=404, detail="DataNode does not exist")
-    
+
+# Routes to read and write files
+
 @app.get("/namenode/api/v1/datanode_read_list/")
 async def getReadFileDataNodes(route: str):
     print(route)
@@ -34,6 +38,8 @@ async def getReadFileDataNodes(route: str):
 async def selectWriteFileDataNodes(request: FileWriteRequest):
     dataNodeWriteList = nameNode.getWriteDataNodes("", 3, 3, "")
     return { "dataNodesAvailable": dataNodeWriteList }
+
+# Routes for the directory tree
 
 @app.get("/namenode/api/v1/ls/")
 async def listDirectory(route: str):

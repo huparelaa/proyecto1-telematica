@@ -1,6 +1,7 @@
 from DirectoryTree import DirectoryTree
-from schemas.handshake import HandShakeRequest
-from schemas.heartbeat import HeartbeatRequest
+# from schemas.handshake import HandShakeRequest
+# from schemas.heartbeat import HeartbeatRequest
+from schemas import *
 import json
 import time
 import threading
@@ -18,7 +19,8 @@ class NameNode:
                 'ip': dataNodeInfo.ip_address, 
                 'port': dataNodeInfo.port, 
                 'available_space': dataNodeInfo.available_space, 
-                'online': True
+                'online': True,
+                'last_heartbeat': 0
             }
             print("Datanodes", json.dumps(self.activesDataNodes, indent=4))
             print("Datanode has been created!")
@@ -31,9 +33,7 @@ class NameNode:
         for block in data:
             routeName, part = block.split("-_-")
             if routeName not in self.blockMap:
-                self.blockMap[routeName] = { 
-                    part: [ip_address + ":" + port]
-                }
+                self.blockMap[routeName] = { part: [ip_address + ":" + port] }
             else: 
                 if part not in self.blockMap[routeName]:
                     self.blockMap[routeName][part] = [ip_address + ":" + port]
@@ -53,9 +53,7 @@ class NameNode:
             print("Datanodes", json.dumps(self.activesDataNodes, indent=4))
             print("Heartbeat has been received!")
             return True
-        else:
-            print("Heartbeat has been failed!")
-            return False
+        return False
     
     def check_data_node_status(self):
         if len(self.activesDataNodes) == 0:
@@ -97,10 +95,4 @@ class NameNode:
 
     def getWriteDataNodes(self, file_name, block_size, block_num, num_replicas): 
         dataNodesToWrite = []
-        dataNodesAvailable = list(self.activesDataNodes.keys())
-        for i in range(0, block_num):
-            dataNodesToWrite.append(dataNodesAvailable[i])
-        return dataNodesToWrite
-        
-    def searchFileInBlockMap(self, filename):
-        pass
+        # dataNodesAvailable = list(self.activesDataNodes.keys().)
