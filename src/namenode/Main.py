@@ -36,7 +36,7 @@ async def getReadFileDataNodes(route: str):
 
 @app.post("/namenode/api/v1/datanode_write_list/")
 async def selectWriteFileDataNodes(request: FileWriteRequest):
-    dataNodeWriteList = nameNode.getWriteDataNodes("", 3, 3, "")
+    dataNodeWriteList = nameNode.getWriteDataNodes(request)
     return { "dataNodesAvailable": dataNodeWriteList }
 
 # Routes for the directory tree
