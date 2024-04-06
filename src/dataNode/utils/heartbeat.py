@@ -1,12 +1,13 @@
 from filetransfer.replication import uploadFileWithGrpc
 def manageHeartbeatResponse(response):
 
-    if response["command"] == "replicate":
-        for data_node in response["data"]:
-            file_path = data_node["file_path"]
-            data_node_address = data_node["data_node_address"]
-            sendFileToDataNode(file_path, data_node_address)
-        print("File replicated")
+    # if response["command"] == "replicate":
+    #     for data_node in response["data"]:
+    #         file_path = data_node["file_path"]
+    #         data_node_address = data_node["data_node_address"]
+    #         sendFileToDataNode(file_path, data_node_address)
+    #     print("File replicated")
+    print(response)
 
 def sendFileToDataNode(file_path, data_node_address):
     try:
