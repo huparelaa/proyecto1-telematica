@@ -2,18 +2,18 @@ from filetransfer.replication import uploadFileWithGrpc
 def manageHeartbeatResponse(response):
 
     if response["command"] == "replicate":
-        data_node_ip = response["data_node_ip"]
-        data_node_port = response["data_node_port"]
-        file_path = response["file_path"]
-        sendFileToDataNode(file_path, data_node_ip, data_node_port)
+        for data_node in response["data"]:
+            file_path = data_node["file_path"]
+            data_node_address = data_node["data_node_address"]
+            sendFileToDataNode(file_path, data_node_address)
         print("File replicated")
 
-def sendFileToDataNode(file_path, dataNode_ip, dataNode_port):
+def sendFileToDataNode(file_path, data_node_address):
     try:
-        print(f"./files{file_path}")
-        with open(f"./files{file_path}", "rb") as file:
+        print(f"./files/{file_path}")
+        with open(f"./files/{file_path}", "rb") as file:
             file_content = file.read()
-            response = uploadFileWithGrpc(file_path, file_content, f"{dataNode_ip}:{dataNode_port}")
+            response = uploadFileWithGrpc(file_path, file_content, data_node_address)
             if response:
                 print("File sent successfully")
             else:
