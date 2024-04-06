@@ -27,7 +27,7 @@ def heartBeat(scheduler):
     try:
         response = requests.post(nameNode_endpoint, json=data)
         response.raise_for_status()  # Esto lanzará un error si la solicitud falla
-        manageHeartbeatResponse(response.json())
+        # manageHeartbeatResponse(response.json())
         return response.json()  # Retorna la respuesta del NameNode
     except requests.exceptions.HTTPError as errh:
         print ("Http Error:",errh)

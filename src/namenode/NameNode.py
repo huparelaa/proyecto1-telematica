@@ -93,6 +93,27 @@ class NameNode:
     def getReadDataNodes(self, route):
         return self.blockMap[route]
 
-    def getWriteDataNodes(self, file_name, block_size, block_num, num_replicas): 
-        dataNodesToWrite = []
-        # dataNodesAvailable = list(self.activesDataNodes.keys().)
+
+    def getAvailableDataNodes(self):
+        availableDataNodes = []
+        for dataNode in self.activesDataNodes:
+            if self.activesDataNodes[dataNode]['online']:
+                availableDataNodes.append(dataNode)
+        return availableDataNodes
+
+    def getWriteDataNodes(self, request: FileWriteRequest): 
+        availableDataNodes = self.getAvailableDataNodes()
+        if len(availableDataNodes) < request.num_replicas:
+            print("Not enough data nodes available")
+            return []
+        block_assignment = {}
+        num_data_nodes = len(availableDataNodes)
+        for i in range(request.num_replicas):
+            block_id = f"{request.file_name}-{i}"
+            data_nodes_assigned = []
+            for j in range(request.num_replicas):
+                data_node_index = (request.block_num + j) % num_data_nodes
+                data_node = availableDataNodes[data_node_index]
+                data_nodes_assigned.append(data_node)
+            block_assignment[block_id] = data_nodes_assigned
+        return block_assignment
