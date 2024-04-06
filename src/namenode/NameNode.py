@@ -103,9 +103,6 @@ class NameNode:
 
     def getWriteDataNodes(self, request: FileWriteRequest): 
         availableDataNodes = self.getAvailableDataNodes()
-        if len(availableDataNodes) < request.num_replicas:
-            print("Not enough data nodes available")
-            return []
         block_assignment = {}
         num_data_nodes = len(availableDataNodes)
         for i in range(request.num_replicas):
@@ -114,6 +111,7 @@ class NameNode:
             for j in range(request.num_replicas):
                 data_node_index = (request.block_num + j) % num_data_nodes
                 data_node = availableDataNodes[data_node_index]
-                data_nodes_assigned.append(data_node)
+                if data_node not in data_nodes_assigned:
+                    data_nodes_assigned.append(data_node)
             block_assignment[block_id] = data_nodes_assigned
         return block_assignment
