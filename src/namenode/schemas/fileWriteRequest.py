@@ -2,6 +2,5 @@ from pydantic import BaseModel
 
 class FileWriteRequest(BaseModel):
     file_name: str
-    block_size: int
+    file_path: str
     block_num: int
-    num_replicas: int

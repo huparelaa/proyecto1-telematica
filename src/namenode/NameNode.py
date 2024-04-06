@@ -102,16 +102,17 @@ class NameNode:
         return availableDataNodes
 
     def getWriteDataNodes(self, request: FileWriteRequest): 
+        #Falta comprobar que el archivo no exista en el sistema
+        # Comprabar con el path 
         availableDataNodes = self.getAvailableDataNodes()
         block_assignment = {}
         num_data_nodes = len(availableDataNodes)
-        for i in range(request.num_replicas):
-            block_id = f"{request.file_name}-{i}"
+        for i in range(request.block_num):
+            block_id = f"{request.file_name}-_-part{i+1:04d}"
             data_nodes_assigned = []
-            for j in range(request.num_replicas):
-                data_node_index = (request.block_num + j) % num_data_nodes
-                data_node = availableDataNodes[data_node_index]
-                if data_node not in data_nodes_assigned:
-                    data_nodes_assigned.append(data_node)
+            data_node_index = (i) % num_data_nodes
+            data_node = availableDataNodes[data_node_index]
+            if data_node not in data_nodes_assigned:
+                data_nodes_assigned.append(data_node)
             block_assignment[block_id] = data_nodes_assigned
         return block_assignment
