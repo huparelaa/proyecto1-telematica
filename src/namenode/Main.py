@@ -1,25 +1,12 @@
 from NameNode import NameNode
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from schemas.handshake import HandShakeRequest
-from schemas.heartbeat import HeartbeatRequest
+from schemas import *
 
 app = FastAPI()
 nameNode = NameNode()
 nameNode.start_heartbeat_checker()
 
-class RouteRequest(BaseModel):
-    route: str
-
-class FileReadRequest(BaseModel):
-    file_name: str
-
-class FileWriteRequest(BaseModel):
-    fileName: str
-    block_size: int
-    last_block_size: int
-    block_num: int
-    replication_rate: int
+# Routes for the data nodes
 
 @app.post("/namenode/api/v1/handshake/")
 async def dataNodeHandshake(request: HandShakeRequest):
@@ -38,8 +25,9 @@ async def dataNodeHeartbeat(request: HeartbeatRequest):
         return { "message": "HeartBeat datanode succesfully!", "success": success }
     else:
         return HTTPException(status_code=404, detail="DataNode does not exist")
-    
-# File ops
+
+# Routes to read and write files
+
 @app.get("/namenode/api/v1/datanode_read_list/")
 async def getReadFileDataNodes(route: str):
     print(route)
@@ -48,10 +36,11 @@ async def getReadFileDataNodes(route: str):
 
 @app.post("/namenode/api/v1/datanode_write_list/")
 async def selectWriteFileDataNodes(request: FileWriteRequest):
-    dataNodeWriteList = nameNode.getWriteDataNodes("", 3, 3, "")
+    dataNodeWriteList = nameNode.getWriteDataNodes(request)
     return { "dataNodesAvailable": dataNodeWriteList }
 
-# File System ops
+# Routes for the directory tree
+
 @app.get("/namenode/api/v1/ls/")
 async def listDirectory(route: str):
     directory_content = nameNode.directoryTree.ls(route)

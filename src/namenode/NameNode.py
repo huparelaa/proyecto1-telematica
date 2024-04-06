@@ -1,10 +1,10 @@
 from DirectoryTree import DirectoryTree
-from schemas.handshake import HandShakeRequest
-from schemas.heartbeat import HeartbeatRequest
+# from schemas.handshake import HandShakeRequest
+# from schemas.heartbeat import HeartbeatRequest
+from schemas import *
 import json
 import time
 import threading
-
 
 class NameNode: 
     def __init__(self):
@@ -19,7 +19,8 @@ class NameNode:
                 'ip': dataNodeInfo.ip_address, 
                 'port': dataNodeInfo.port, 
                 'available_space': dataNodeInfo.available_space, 
-                'online': True
+                'online': True,
+                'last_heartbeat': 0
             }
             print("Datanodes", json.dumps(self.activesDataNodes, indent=4))
             print("Datanode has been created!")
@@ -32,9 +33,7 @@ class NameNode:
         for block in data:
             routeName, part = block.split("-_-")
             if routeName not in self.blockMap:
-                self.blockMap[routeName] = { 
-                    part: [ip_address + ":" + port]
-                }
+                self.blockMap[routeName] = { part: [ip_address + ":" + port] }
             else: 
                 if part not in self.blockMap[routeName]:
                     self.blockMap[routeName][part] = [ip_address + ":" + port]
@@ -54,9 +53,7 @@ class NameNode:
             print("Datanodes", json.dumps(self.activesDataNodes, indent=4))
             print("Heartbeat has been received!")
             return True
-        else:
-            print("Heartbeat has been failed!")
-            return False
+        return False
     
     def check_data_node_status(self):
         if len(self.activesDataNodes) == 0:
@@ -68,6 +65,7 @@ class NameNode:
                 continue
             last_heartbeat = data_node_info.get('last_heartbeat', 0)
             elapsed_time = current_time - last_heartbeat
+            print(f"Elapsed time for Data Node {data_node_id}: {elapsed_time}")
             if elapsed_time > 30:
                 data_node_info['online'] = False
                 print(f"Data Node {data_node_id} is offline")
@@ -91,22 +89,30 @@ class NameNode:
             for part in self.blockMap[route]:
                 if keyDataNode in self.blockMap[route][part]:
                     self.blockMap[route][part].remove(keyDataNode)
-                    print(f"DataNode {keyDataNode} has been deleted from blockMap")
-                else: 
-                    print(f"DataNode {keyDataNode} does not exist in blockMap")
-        print("BlockMap", json.dumps(self.blockMap, indent=4))
 
     def getReadDataNodes(self, route):
         return self.blockMap[route]
 
-    def getWriteDataNodes(self, file_name, block_size, block_num, num_replicas): 
-        dataNodesToWrite = []
-        dataNodesAvailable = list(self.activesDataNodes.keys())
-        for i in range(0, block_num):
-            dataNodesToWrite.append(dataNodesAvailable[i])
-        return dataNodesToWrite
-    
 
-    
-    def searchFileInBlockMap(self, filename):
-        pass
+    def getAvailableDataNodes(self):
+        availableDataNodes = []
+        for dataNode in self.activesDataNodes:
+            if self.activesDataNodes[dataNode]['online']:
+                availableDataNodes.append(dataNode)
+        return availableDataNodes
+
+    def getWriteDataNodes(self, request: FileWriteRequest): 
+        #Falta comprobar que el archivo no exista en el sistema
+        # Comprabar con el path 
+        availableDataNodes = self.getAvailableDataNodes()
+        block_assignment = {}
+        num_data_nodes = len(availableDataNodes)
+        for i in range(request.block_num):
+            block_id = f"{request.file_name}-_-part{i+1:04d}"
+            data_nodes_assigned = []
+            data_node_index = (i) % num_data_nodes
+            data_node = availableDataNodes[data_node_index]
+            if data_node not in data_nodes_assigned:
+                data_nodes_assigned.append(data_node)
+            block_assignment[block_id] = data_nodes_assigned
+        return block_assignment

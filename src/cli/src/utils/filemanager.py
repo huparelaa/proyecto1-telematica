@@ -18,7 +18,7 @@ def split_file(file_path):
                 block_file.write(block)
             block_num += 1
             block = file.read(block_size)
-
+    return block_num - 1
 def join_files(file_name):
     destination_directory = "../downloads"
     partitions_directory = "splits/downloads"
