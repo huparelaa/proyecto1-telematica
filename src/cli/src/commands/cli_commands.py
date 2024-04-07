@@ -45,8 +45,7 @@ def cd(my_route, directory, username):
                 return my_route
             return new_route+"/"
         except requests.exceptions.RequestException as e:
-            print("No such file or directory")
-            return my_route
+            raise e
         
 def mkdir(my_route, directory):
     try:

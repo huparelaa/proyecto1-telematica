@@ -12,6 +12,8 @@ def main():
     while True:
         command = input(f"\033[92m{my_route}$ \033[0m")
         command = command.split(" ")
+        #remove empty strings
+        command = list(filter(lambda x: x != "", command))
         if command[0] == "exit":
             break
 
@@ -30,7 +32,10 @@ def main():
             if len(command) != 2:
                 print("Usage: cd <directory>")
             else:
-                my_route = cd(my_route, command[1], username)
+                try:
+                    my_route = cd(my_route, command[1], username)
+                except Exception as e:
+                    print("No such file or directory")
         elif command[0] == "clear":
             os.system("clear")
         elif command[0] == "exit":
@@ -60,7 +65,6 @@ def login():
         mkdir("/", username)
         cd("/", username, username)
 
-    os.system("clear")
     return username
 
 if __name__ == "__main__":

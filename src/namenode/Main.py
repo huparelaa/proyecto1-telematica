@@ -67,4 +67,4 @@ async def changeDirectory(request: RouteRequest):
     if targetRequest: 
         return { "message": "Change Directory!", "route": request.route }
     else: 
-        return HTTPException(status_code=404, detail="No such file or directory")
+        raise HTTPException(status_code=404, detail="No such file or directory")
