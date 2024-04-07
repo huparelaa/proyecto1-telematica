@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import requests
 from utils.filemanager import split_file, join_files
 from connection.nameNodeConn import get_datanode_address
-from connection.dataNodeConn import send_files_to_datanode, download_files_from_datanode
+from connection.dataNodeConn import send_file_to_datanode, download_files_from_datanode, delete_splits
 
 load_dotenv()
 
@@ -60,11 +60,20 @@ def write(my_route, file_name):
     try:        
         block_num = split_file(f"../uploads/{file_name}")
         route = f"{my_route}{file_name}/"
-        get_datanode_address(file_name, my_route, block_num)
-        # send_files_to_datanode(route=route, data_node_address=get_datanode_address(file_name, my_route, block_num))
+        
+        adresses = get_datanode_address(file_name, my_route, block_num)
+        if not adresses:
+            return print("No Data Nodes available")
+        for i in range(block_num):
+            # Address example: "hobar.mp3-_-part0020": ["192.168.1.15:50051"]
+            full_file_name = f"{file_name}-_-part{i+1:04d}"
+            adress = adresses[full_file_name][0]
+            send_file_to_datanode(route=route, data_node_address=adress, file_name=full_file_name)
+        delete_splits("uploads")
+        
         print(f"File {file_name} written")
         
-    except FileNotFoundError:
+    except Exception as e:
         return
     
 def read(my_route, file_name):

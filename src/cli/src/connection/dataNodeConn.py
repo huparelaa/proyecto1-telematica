@@ -18,6 +18,22 @@ def download_file_with_grpc(file_name, dataNode_address):
         response = stub.DownloadFile(filetransfer_pb2.Request(name=file_name))
         return response
     
+def send_file_to_datanode(data_node_address, route, file_name):
+    partitions_directory = "splits/uploads"
+    if not os.path.exists(partitions_directory):
+        print("No partitions to send")
+        return
+    try:
+        partition_path = os.path.join(partitions_directory, file_name)
+        with open(partition_path, 'rb') as partition_file:
+            content = partition_file.read()
+            folder_path = route+file_name
+            upload_file_with_grpc(folder_path, content, data_node_address)
+    except Exception as e:
+        return
+
+    
+
 def send_files_to_datanode(data_node_address, route):
     partitions_directory = "splits/uploads"
     if not os.path.exists(partitions_directory):

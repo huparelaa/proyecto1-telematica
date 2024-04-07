@@ -17,7 +17,11 @@ def get_datanode_address(file_name, file_path, block_num):
     try: 
         response = requests.post(f"http://{name_node_ip}:{name_node_port}/namenode/api/v1/datanode_write_list/", json=data)
         response.raise_for_status()
-        print(json.dumps(response.json(), indent=4))
+        json_response = response.json()
+        if "dataNodesAvailable" in json_response:
+            return json_response["dataNodesAvailable"]
+        else:
+            return None
     except requests.exceptions.RequestException as e:
         print("No such file or directory")
         return None

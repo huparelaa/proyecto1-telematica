@@ -107,6 +107,8 @@ class NameNode:
         availableDataNodes = self.getAvailableDataNodes()
         block_assignment = {}
         num_data_nodes = len(availableDataNodes)
+        if num_data_nodes == 0:
+            return block_assignment
         for i in range(request.block_num):
             block_id = f"{request.file_name}-_-part{i+1:04d}"
             data_nodes_assigned = []
