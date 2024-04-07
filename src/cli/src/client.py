@@ -10,7 +10,7 @@ def main():
     print("Welcome to the Hadoop File System")
     print("Type 'help' to see the available commands")
     while True:
-        command = input(f"{my_route}$ ")
+        command = input(f"\033[92m{my_route}$ \033[0m")
         command = command.split(" ")
         if command[0] == "exit":
             break
