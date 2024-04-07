@@ -32,24 +32,16 @@ def send_file_to_datanode(data_node_address, route, file_name):
     except Exception as e:
         return
 
-def download_files_from_datanode(data_node_address, file_name, file_path):
-    #remove first "/"
+def download_file_from_datanode(data_node_address, file_name,file_part, file_path):
     if file_path[0] == "/":
         file_path = file_path[1:]
     partitions_directory = "splits/downloads"
     if not os.path.exists(partitions_directory):
         os.makedirs(partitions_directory)
-    
-    # get partition by partition
-    block_num = 1
-    while True:
-        formatted_block_num = f"{block_num:04}"
-
-        response = download_file_with_grpc(f"{file_path}{file_name}/{file_name}{token}{formatted_block_num}", data_node_address)
-        if response.content == b'':
-            break
+    try:
+        response = download_file_with_grpc(f"{file_path}{file_name}/{file_name}-_-{file_part}", data_node_address)
         partition_path = os.path.join(partitions_directory, response.name.split("/")[-1])
-        
         with open(partition_path, 'wb') as partition_file:
             partition_file.write(response.content)
-        block_num += 1
+    except Exception as e:
+        return

@@ -2,11 +2,11 @@ import os
 from dotenv import load_dotenv
 import requests
 from utils.filemanager import split_file, join_files
-from connection.nameNodeConn import get_datanode_address
-from connection.dataNodeConn import send_file_to_datanode, download_files_from_datanode, delete_splits
+from connection.nameNodeConn import get_datanode_address, get_datanode_address_read
+from connection.dataNodeConn import send_file_to_datanode, download_file_from_datanode, delete_splits
 
 load_dotenv()
-
+token = "-_-"
 def namenode_address():
     name_node_ip = os.getenv("NAMENODE_IP")
     name_node_port = os.getenv("NAMENODE_PORT")
@@ -78,9 +78,15 @@ def write(my_route, file_name):
     
 def read(my_route, file_name):
     try:
-        download_files_from_datanode(data_node_address=get_datanode_address(), file_name=file_name, file_path=my_route)
+        addresses = get_datanode_address_read(file_name, my_route)
+        if not addresses:
+            return print("No such file or directory")
+        for file in addresses:
+            data_node_address = addresses[file][0]
+            download_file_from_datanode(data_node_address=data_node_address, file_name=file_name, file_part=file, file_path=my_route)
         join_files(file_name)
         print(f"File {file_name} read, check the downloads folder")
-    except FileNotFoundError:
+
+    except Exception as e:
         print("File not found")
         return
