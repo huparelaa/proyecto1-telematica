@@ -42,3 +42,12 @@ def get_datanode_address_read(file_name, file_path):
             return None
     except requests.exceptions.RequestException as e:
         return None
+
+def send_confirmation_to_namenode(file_name, file_path):
+    data = {"route": file_path+file_name}
+    try:
+        response = requests.post(f"http://{name_node_ip}:{name_node_port}/namenode/api/v1/confirm_write/", json=data)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print("No such file or directory")
+        raise e

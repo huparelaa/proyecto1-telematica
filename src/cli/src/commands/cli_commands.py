@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 import requests
 from utils.filemanager import split_file, join_files
-from connection.nameNodeConn import get_datanode_address, get_datanode_address_read
+from connection.nameNodeConn import get_datanode_address, get_datanode_address_read, send_confirmation_to_namenode
 from connection.dataNodeConn import send_file_to_datanode, download_file_from_datanode, delete_splits
 
 load_dotenv()
@@ -70,7 +70,7 @@ def write(my_route, file_name):
             adress = adresses[full_file_name][0]
             send_file_to_datanode(route=route, data_node_address=adress, file_name=full_file_name)
         delete_splits("uploads")
-        
+        send_confirmation_to_namenode(file_name, my_route)
         print(f"File {file_name} written")
         
     except Exception as e:
