@@ -1,4 +1,5 @@
 import json
+from schemas import RouteRequest
 
 class FileNode:
     def __init__(self, name, route, numReplicas):
@@ -17,8 +18,8 @@ class DirectoryTree:
     def __init__(self):
         self.root = DirectoryNode("/")
 
-    def add_files(self, route, metadata, chunks_ubication):
-        parts = route.split("/")
+    def add_files(self, request: RouteRequest):
+        parts = request.route.split("/")
         file_name = parts[-1]
         actual_directory = self.root
         for part in parts[1:-1]:
@@ -26,7 +27,8 @@ class DirectoryTree:
                 actual_directory = actual_directory.subdirectory[part]
             else: 
                 return False
-        actual_directory.files[file_name] = { "route": route, "numReplicas": 1, "block_list": []  }
+        actual_directory.files[file_name] = { "route": request.route, "numReplicas": 3 }
+        return True
 
     def add_directory(self, route):
         parts = route.split("/")

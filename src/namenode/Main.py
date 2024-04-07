@@ -39,6 +39,13 @@ async def selectWriteFileDataNodes(request: FileWriteRequest):
     dataNodeWriteList = nameNode.getWriteDataNodes(request)
     return { "dataNodesAvailable": dataNodeWriteList }
 
+@app.post("/namenode/api/v1/confirm_write/")
+async def confirmWrite(request: RouteRequest):
+    success = nameNode.directoryTree.add_files(request)
+    if success: 
+        return { "message": "File successfully written!", "success": success }
+    else: 
+        HTTPException(status_code=404, detail="No such file or directory")
 # Routes for the directory tree
 
 @app.get("/namenode/api/v1/ls/")
