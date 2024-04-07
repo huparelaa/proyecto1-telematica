@@ -32,29 +32,6 @@ def send_file_to_datanode(data_node_address, route, file_name):
     except Exception as e:
         return
 
-    
-
-def send_files_to_datanode(data_node_address, route):
-    partitions_directory = "splits/uploads"
-    if not os.path.exists(partitions_directory):
-        print("No partitions to send")
-        return
-
-    file_name = route.split("/")[-2]
-        
-    partitions = sorted(os.listdir(partitions_directory))
-    # partition name format: <file_name>-_-part<block_num>
-    partitions = [partition for partition in partitions if partition.split("-_-")[0] == file_name]
-
-    for partition in partitions:
-        partition_path = os.path.join(partitions_directory, partition)
-        with open(partition_path, 'rb') as partition_file:
-            content = partition_file.read()
-            folder_path = route+partition
-            upload_file_with_grpc(folder_path, content, data_node_address)
-
-    delete_splits("uploads")
-
 def download_files_from_datanode(data_node_address, file_name, file_path):
     #remove first "/"
     if file_path[0] == "/":
