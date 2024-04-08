@@ -11,7 +11,18 @@ class NameNode:
         self.directoryTree = DirectoryTree()
         self.blockMap = {}
         self.activesDataNodes = {}
+
+        self.replayEditLog()
     
+    def replayEditLog(self):
+        with open("editlog.txt", "r") as file:
+            for line in file:
+                action, route = line.strip().split(":")
+                if action == "write":
+                    self.directoryTree.add_files(RouteRequest(route=route))
+                elif action == "mkdir":
+                    self.directoryTree.add_directory(route)
+
     def createDataNode(self, dataNodeInfo: HandShakeRequest):
         if dataNodeInfo.ip_address not in self.activesDataNodes:
             keyDataNode = dataNodeInfo.ip_address + ":" + dataNodeInfo.port
@@ -51,7 +62,6 @@ class NameNode:
             self.activesDataNodes[keyDataNode]['last_heartbeat'] = current_time
             self.updateBlockMap(heartbeatRequest.ip_address, heartbeatRequest.port, heartbeatRequest.block_list)
             print("Datanodes", json.dumps(self.activesDataNodes, indent=4))
-            print("Heartbeat has been received!")
             return True
         return False
     

@@ -6,6 +6,10 @@ app = FastAPI()
 nameNode = NameNode()
 nameNode.start_heartbeat_checker()
 
+def log_action(action, route):
+    with open("editlog.txt", "a") as file:
+        file.write(f"{action}: {route}\n")
+
 # Routes for the data nodes
 
 @app.post("/namenode/api/v1/handshake/")
@@ -43,6 +47,7 @@ async def selectWriteFileDataNodes(request: FileWriteRequest):
 async def confirmWrite(request: RouteRequest):
     success = nameNode.directoryTree.add_files(request)
     if success: 
+        log_action("write", request.route)
         return { "message": "File successfully written!", "success": success }
     else: 
         HTTPException(status_code=404, detail="No such file or directory")
@@ -57,6 +62,7 @@ async def listDirectory(route: str):
 async def makeDirectory(route: RouteRequest):
     success = nameNode.directoryTree.add_directory(route.route)
     if success: 
+        log_action("mkdir", route.route)
         return { "message": "Directory successfully created!", "success": success }
     else: 
         return { "message": "Directory failed created!", "success": success }
