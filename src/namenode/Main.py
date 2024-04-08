@@ -23,7 +23,6 @@ async def dataNodeHandshake(request: HandShakeRequest):
     
 @app.post("/namenode/api/v1/heartbeat/")
 async def dataNodeHeartbeat(request: HeartbeatRequest):
-    print(request.ip_address, request.port)
     success = nameNode.heartBeat(request)
     if success: 
         return { "message": "HeartBeat datanode succesfully!", "success": success }
@@ -34,7 +33,6 @@ async def dataNodeHeartbeat(request: HeartbeatRequest):
 
 @app.get("/namenode/api/v1/datanode_read_list/")
 async def getReadFileDataNodes(route: str):
-    print(route)
     datanodes = nameNode.getReadDataNodes(route)
     return { "dataNodes": datanodes }
 

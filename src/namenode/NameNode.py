@@ -34,7 +34,6 @@ class NameNode:
                 'last_heartbeat': 0
             }
             print("Datanodes", json.dumps(self.activesDataNodes, indent=4))
-            print("Datanode has been created!")
             return True
         else:
             print("Datanode has been already created!")
