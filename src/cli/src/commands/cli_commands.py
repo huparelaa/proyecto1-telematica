@@ -61,6 +61,8 @@ def write(my_route, file_name):
         route = f"{my_route}{file_name}/"
         
         adresses = get_datanode_address(file_name, my_route, block_num)
+        if adresses == "File already exists":
+            return
         if not adresses:
             return print("No Data Nodes available")
         for i in range(block_num):

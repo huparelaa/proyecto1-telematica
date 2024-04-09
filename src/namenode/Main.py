@@ -38,6 +38,15 @@ async def getReadFileDataNodes(route: str):
 
 @app.post("/namenode/api/v1/datanode_write_list/")
 async def selectWriteFileDataNodes(request: FileWriteRequest):
+    #check if the file already exists
+    blockMap = nameNode.blockMap
+    # delete first '/'
+    if request.file_path[0] == "/":
+        request.file_path = request.file_path[1:]
+
+    if f"{request.file_path}{request.file_name}/{request.file_name}" in blockMap:
+        raise HTTPException(status_code=400, detail="File already exists")
+
     dataNodeWriteList = nameNode.getWriteDataNodes(request)
     return { "dataNodesAvailable": dataNodeWriteList }
 

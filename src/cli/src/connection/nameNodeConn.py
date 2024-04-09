@@ -23,8 +23,9 @@ def get_datanode_address(file_name, file_path, block_num):
         else:
             return None
     except requests.exceptions.RequestException as e:
-        print("No such file or directory")
-        return None
+        if response.status_code == 400:
+            print("File already exists")
+        return "File already exists"
     
 def get_datanode_address_read(file_name, file_path):
     
