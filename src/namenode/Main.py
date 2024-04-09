@@ -1,6 +1,7 @@
 from NameNode import NameNode
 from fastapi import FastAPI, HTTPException
 from schemas import *
+import json
 
 app = FastAPI()
 nameNode = NameNode()
@@ -23,12 +24,13 @@ async def dataNodeHandshake(request: HandShakeRequest):
     
 @app.post("/namenode/api/v1/heartbeat/")
 async def dataNodeHeartbeat(request: HeartbeatRequest):
-    success = nameNode.heartBeat(request)
-    if success: 
-        return { "message": "HeartBeat datanode succesfully!", "success": success }
-    else:
-        return HTTPException(status_code=404, detail="DataNode does not exist")
-
+        print("HeartBeat", json.dumps(request.status, indent=4))
+        success, command, blocks_to_replicate = nameNode.heartBeat(request)
+        if success: 
+            return { "message": "HeartBeat datanode succesfully!", "success": success, "command": command, "data": blocks_to_replicate }
+        else:
+            return HTTPException(status_code=404, detail="DataNode does not exist")
+    
 # Routes to read and write files
 
 @app.get("/namenode/api/v1/datanode_read_list/")

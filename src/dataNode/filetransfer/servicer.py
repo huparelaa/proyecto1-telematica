@@ -18,6 +18,7 @@ def grpcServer():
     server.start()
     handShake()
     print(f"Server gRPC started on port {PORT}")
+    
     my_scheduler = sched.scheduler(time.time, time.sleep)
     my_scheduler.enter(5, 1, heartBeat, (my_scheduler,))
     my_scheduler.run()

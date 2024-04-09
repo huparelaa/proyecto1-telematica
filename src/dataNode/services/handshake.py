@@ -21,7 +21,6 @@ def handShake():
         data = {
             "ip_address": my_ip, 
             "port": str(PORT), 
-            "available_space": 1000, 
             "block_list":  get_files_info() 
         }
 

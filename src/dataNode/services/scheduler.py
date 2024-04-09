@@ -3,8 +3,11 @@ from dotenv import load_dotenv
 import requests
 import os
 from utils.utils import get_my_ip, get_files_info
-from utils.heartbeat import manageHeartbeatResponse
+from utils.heartbeat import sendFileToDataNode
 import sys
+import json
+import time
+import threading
 
 load_dotenv()
 
@@ -13,13 +16,15 @@ HEARTBEAT_URL_PATH = "/api/v1/heartbeat"
 nameNode_ip = os.getenv("NAMENODE_IP")
 nameNode_port = os.getenv("NAMENODE_PORT")
 
+data_node_status = "active"
+
 def heartBeat(scheduler):
     scheduler.enter(HEARTBEAT_INTERVAL, 1, heartBeat, (scheduler,))
     data = {
         "ip_address": get_my_ip(),
         "port": str(os.environ.get('PORT', 50051)),
-        "available_space": 1000,
         "block_list": get_files_info(),
+        "status": data_node_status
     }
 
     print(data)
@@ -27,7 +32,8 @@ def heartBeat(scheduler):
     try:
         response = requests.post(nameNode_endpoint, json=data)
         response.raise_for_status()  # Esto lanzará un error si la solicitud falla
-        # manageHeartbeatResponse(response.json())
+        threading.Thread(target=manageHeartbeatResponse, args=(response.json(),), daemon=True).start()
+
         return response.json()  # Retorna la respuesta del NameNode
     except requests.exceptions.HTTPError as errh:
         print ("Http Error:",errh)
@@ -41,3 +47,15 @@ def heartBeat(scheduler):
     except requests.exceptions.RequestException as err:
         print ("OOps: Something Else",err)
         sys.exit(1)
+
+def manageHeartbeatResponse(response):
+        global data_node_status
+        data_node_status = "busy"
+        print(json.dumps(response, indent=4))
+        if response["command"] == "replicate":
+            for data_node in response["data"]:
+                file_path = data_node["file_path"]
+                data_node_address = data_node["data_node_address"]
+                sendFileToDataNode(file_path, data_node_address)
+            print("File replicated")
+        data_node_status = "active"
