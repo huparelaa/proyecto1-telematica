@@ -1,3 +1,7 @@
 **/venv
 **/__pycache__
 **/files
+/.vscode
+
+/src/dataNode/__pycache__
+/src/namenode/__pycache__

@@ -1,0 +1,61 @@
+version: '3.4'
+services:
+  namenode:
+    build:
+      context: ./src/namenode
+    container_name: namenode
+    ports:
+      - "8000:8000"  # You can change the ports as needed
+    networks:
+      - file_system
+    volumes:
+      - /home/jdvalencir/namenode/fsimage/fsimage.json:/app/fsimage/fsimage.json
+      - /home/jdvalencir/namenode/editlog.txt:/app/editlog.txt
+  datanode1:
+    build:
+      context: ./src/dataNode
+      dockerfile: Dockerfile
+    ports:
+      - "50051:50051"  # You can change the ports as needed
+    environment:
+      - NAMENODE_IP=namenode
+      - NAMENODE_PORT=8000
+    depends_on:
+      - namenode
+    networks:
+      - file_system
+    volumes:
+      - /home/jdvalencir/datanode1:/app/files
+  datanode2:
+    build:
+      context: ./src/dataNode
+      dockerfile: Dockerfile
+    ports:
+      - "50052:50051"  # You can change the ports as needed
+    environment:
+      - NAMENODE_IP=namenode
+      - NAMENODE_PORT=8000
+    depends_on:
+      - namenode
+    networks:
+      - file_system
+    volumes:
+      - /home/jdvalencir/datanode2:/app/files
+  datanode3:
+    build:
+      context: ./src/dataNode
+      dockerfile: Dockerfile
+    ports:
+      - "50053:50051"  # You can change the ports as needed
+    environment:
+      - NAMENODE_IP=namenode
+      - NAMENODE_PORT=8000
+    depends_on:
+      - namenode
+    networks:
+      - file_system
+    volumes:
+      - /home/jdvalencir/datanode3:/app/files
+networks:
+  file_system:
+    driver: bridge
