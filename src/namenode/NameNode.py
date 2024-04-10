@@ -29,7 +29,6 @@ class NameNode:
             self.activesDataNodes[keyDataNode] = { 
                 'ip': dataNodeInfo.ip_address, 
                 'port': dataNodeInfo.port, 
-                'available_space': dataNodeInfo.available_space, 
                 'online': True,
                 'last_heartbeat': 0
             }
@@ -40,33 +39,74 @@ class NameNode:
             return False
     
     def updateBlockMap(self, ip_address, port, data):
+        keyDataNode = ip_address + ":" + port
+        all_blocks = set()
+
+        # Primero, actualizar el blockMap con los bloques actuales.
         for block in data:
             routeName, part = block.split("-_-")
             if routeName not in self.blockMap:
-                self.blockMap[routeName] = { part: [ip_address + ":" + port] }
-            else: 
+                self.blockMap[routeName] = { part: [keyDataNode] }
+            else:
                 if part not in self.blockMap[routeName]:
-                    self.blockMap[routeName][part] = [ip_address + ":" + port]
-                else: 
-                    if ip_address + ":" + port not in self.blockMap[routeName][part]:
-                        self.blockMap[routeName][part].append(ip_address + ":" + port)
-        print("BlockMap", json.dumps(self.blockMap, indent=4))
+                    self.blockMap[routeName][part] = [keyDataNode]
+                else:
+                    if keyDataNode not in self.blockMap[routeName][part]:
+                        self.blockMap[routeName][part].append(keyDataNode)
+
+            all_blocks.add((routeName, part))
+
+        # Ahora, revisar y eliminar cualquier bloque obsoleto para este DataNode.
+        for routeName in list(self.blockMap.keys()):
+            for part in list(self.blockMap[routeName].keys()):
+                if (routeName, part) not in all_blocks and keyDataNode in self.blockMap[routeName][part]:
+                    self.blockMap[routeName][part].remove(keyDataNode)
+                    if not self.blockMap[routeName][part]:  # Si no hay más DataNodes para este bloque, eliminar la entrada.
+                        del self.blockMap[routeName][part]
+
+                if not self.blockMap[routeName]:  # Si no hay más partes para esta ruta, eliminar la entrada.
+                    del self.blockMap[routeName]
+
+        print("BlockMap actualizado:", json.dumps(self.blockMap, indent=4))
+
+    def analyzeBlockMap(self, keyDataNode):
+        command = ""
+        blocks_to_replicate = []
+        for route in self.blockMap:
+            for part in self.blockMap[route]:
+                if len(self.blockMap[route][part]) < 3:
+                    command = "replicate"
+                    data = {
+                        "data_node_address": self.chooseDataNodeToReplicate(route, part, keyDataNode),
+                        "file_path": route + "-_-" + part,
+                    }
+                    blocks_to_replicate.append(data)
+        return command, blocks_to_replicate
+
+    def chooseDataNodeToReplicate(self, route, part, keyDataNode):
+        data_nodes = self.blockMap[route][part]
+        for data_node in self.activesDataNodes:
+            print(data_node)
+            if data_node not in data_nodes and data_node != keyDataNode:
+                return data_node
+        return None
 
     def heartBeat(self, heartbeatRequest: HeartbeatRequest):
         current_time = time.time()
+        command = ""
+        block_to_replicate = []
         keyDataNode = heartbeatRequest.ip_address + ":" + heartbeatRequest.port
         if keyDataNode in self.activesDataNodes:
             self.activesDataNodes[keyDataNode]['online'] = True
-            self.activesDataNodes[keyDataNode]['available_space'] = heartbeatRequest.available_space
             self.activesDataNodes[keyDataNode]['last_heartbeat'] = current_time
             self.updateBlockMap(heartbeatRequest.ip_address, heartbeatRequest.port, heartbeatRequest.block_list)
-            print("Datanodes", json.dumps(self.activesDataNodes, indent=4))
-            return True
-        return False
+            if heartbeatRequest.status != "busy":
+                command, block_to_replicate = self.analyzeBlockMap(keyDataNode)
+            return True, command, block_to_replicate
+        return False, "", []
     
     def check_data_node_status(self):
         if len(self.activesDataNodes) == 0:
-            print("No Data Nodes available")
             return
         current_time = time.time()
         for data_node_id, data_node_info in self.activesDataNodes.items():
