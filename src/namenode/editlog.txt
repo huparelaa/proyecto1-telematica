@@ -1,0 +1,2 @@
+mkdir: /jdvalencir
+write: /jdvalencir/r1ck.mp4
