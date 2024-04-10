@@ -20,6 +20,7 @@ services:
     environment:
       - NAMENODE_IP=namenode
       - NAMENODE_PORT=8000
+      - MY_IP=127.0.0.1
     depends_on:
       - namenode
     networks:
@@ -35,6 +36,7 @@ services:
     environment:
       - NAMENODE_IP=namenode
       - NAMENODE_PORT=8000
+      - MY_IP=127.0.0.1
     depends_on:
       - namenode
     networks:
@@ -50,6 +52,7 @@ services:
     environment:
       - NAMENODE_IP=namenode
       - NAMENODE_PORT=8000
+      - MY_IP=127.0.0.1
     depends_on:
       - namenode
     networks:
@@ -58,4 +61,3 @@ services:
       - /home/jdvalencir/datanode3:/app/files
 networks:
   file_system:
-    driver: bridge

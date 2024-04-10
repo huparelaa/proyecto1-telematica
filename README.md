@@ -1,117 +1,271 @@
-# PROYECTO 1: SISTEMA DE ARCHIVOS DISTRIBUIDOS
-### Integrantes:
-* Julián David Valencia Restrepo.
-* Hobarlan Uparela Arroyo.
-* Andrés Prada Rodríguez.
-## Marco teórico de los sistemas distribuidos de archivos por bloques y por objetos.
-### Introducción
-En la era actual de la informática, los sistemas distribuidos de archivos han sido cruciales por su capacidad para manejar datos eficientes y confiablemente. En un mundo donde la generación de datos se ha incrementado exponencialmente, gracias a internet y a la proliferación de dispositivos conectados, la necesidad de sistemas capaces de almacenar, procesar y recuperar grandes volúmenes de información es más crítica que nunca. Los sistemas distribuidos de archivos, como Google File System (GFS) y Hadoop Distributed File System (HDFS), son ejemplos sobresalientes de esta tecnología, proporcionando soluciones robustas para el almacenamiento y manejo de datos en entornos informáticos modernos.
+# ST0263 - Tópicos Especiales de Telemática
+#
+## Integrantes:
+- Hobarlan Uparela Arroyo (huparelaa@eafit.edu.co)
+- Julian David Valencia Restrepo (jdvalencir@eafit.edu.co)
+- Andres Prada Rodriguez (apradar@eafit.edu.co)
 
-Un sistema de archivos distribuido es un sistema que permite el almacenamiento de archivos en múltiples servidores o nodos, a diferencia de los sistemas de archivos tradicionales que se limitan a un solo dispositivo de almacenamiento. Estos sistemas están diseñados para ser altamente escalables, confiables y accesibles, permitiendo así la gestión eficiente de grandes conjuntos de datos distribuidos geográficamente. Además, facilitan el acceso concurrente a los datos por parte de múltiples usuarios o aplicaciones, mejorando significativamente el rendimiento y la disponibilidad. 
+## Profesor
+- **Nombre:** Edwin Nelson Montoya Munera
+- **Correo:** emontoya@eafit.edu.co
 
-### Sistemas Distribuidos de Archivos por Bloques
+# Proyecto 1 (Sistema de archivos distribuidos)
 
-Los sistemas distribuidos de archivos por bloques son aquellos que almacenan datos en unidades fijas conocidas como "bloques". En estos sistemas, cada archivo se divide en bloques, que se distribuyen y replican a través de una red de nodos. Esta estructura ofrece una forma eficiente y escalable de manejar grandes volúmenes de datos. 
+## 1. breve descripción de la actividad
 
-Los sistemas distribuidos de archivos por bloques son aquellos que almacenan datos en unidades fijas conocidas como "bloques". En estos sistemas, cada archivo se divide en bloques, que se distribuyen y replican a través de una red de nodos. Esta estructura ofrece una forma eficiente y escalable de manejar grandes volúmenes de datos. 
+La actividad consiste en desarrollar un sistema de almacenamiento distribuido basado en un modelo de arquitectura cliente-servidor utilizando Python para los datanodes y el cliente, FastAPI para el namenode y Docker para todo el tema de contenerización. El sistema está compuesto por un NameNode y varios DataNodes que se comunican entre sí mediante gRPC y se encargan de almacenar y gestionar archivos de manera distribuida. El objetivo es implementar las funcionalidades básicas de un sistema de almacenamiento distribuido, incluyendo la replicación de datos, el manejo de la disponibilidad de nodos y la gestión de errores. El desarrollo se realizará siguiendo buenas prácticas de programación y utilizando contenedores Docker para facilitar el despliegue y la gestión del sistema.
 
-Estos sistemas funcionan mediante la distribución de datos en múltiples nodos, lo que permite un procesamiento paralelo y un acceso rápido. Los componentes principales incluyen: 
+### 1.1. Que aspectos cumplió o desarrolló de la actividad propuesta por el profesor (requerimientos funcionales y no funcionales)
 
-* **Nodos de Datos**: Almacenan los bloques de datos. 
+Aspectos cumplidos de la actividad propuesta por el profesor:
 
-* **Nodo Maestro**: Gestiona la ubicación de los bloques y las operaciones sobre los archivos. 
+* Implementación del sistema de archivos distribuido, incluyendo funciones como mkdir, cd y ls para la gestión de directorios.
+* Desarrollo del cliente para realizar peticiones al NameNode y obtener la ubicación de los bloques de archivos.
+* Implementación del NameNode para gestionar las solicitudes del cliente, incluyendo la ubicación de bloques y la información sobre su almacenamiento.
+* Implementación de las funcionalidades de escritura (write) y lectura (read) de archivos en el sistema distribuido.
+* Se implemento la función del editlog para registrar todas las creaciones de archivos y directorios.
 
-* **Protocolos de Red**: Permiten la comunicación y transferencia de datos entre nodos. 
+### 1.2. Que aspectos NO cumplió o desarrolló de la actividad propuesta por el profesor (requerimientos funcionales y no funcionales)
 
-* **Aplicaciones y Ejemplos**:
+* La funcionalidad de append de archivos texto.
 
-* **Almacenamiento en la Nube**: Como en sistemas de procesamiento de datos a gran escala. 
+## 2. información general de diseño de alto nivel, arquitectura, patrones, mejores prácticas utilizadas.
 
-* **Ejemplos**: Hadoop Distributed File System (HDFS), Google File System (GFS). 
+* Componentes Principales:
+* Cliente: Aplicación de cliente escrita en Python.
+* Namenode: Servidor central que gestiona el sistema de archivos distribuidos.
+* Datanode(s): Nodos de almacenamiento distribuido que contienen las particiones de los archivos.
 
-### Sistemas Distribuidos de Archivos por Objetos
+* Patrones Utilizados
+* Modelo Cliente-Servidor: Se implementa un modelo cliente-servidor donde el cliente solicita información al servidor (Namenode) y se conecta directamente con los nodos de datos (Datanodes) para realizar operaciones de lectura y escritura.
+* API RESTful: La comunicación entre el cliente y el Namenode se realiza utilizando principios de una API RESTful para la transmisión de información sobre la ubicación de las particiones de los archivos.
+* Patrón de Acceso Directo a Datanode: Para maximizar la eficiencia en la transferencia de datos, el cliente se conecta directamente al Datanode via grpc para obtener o enviar archivos.
 
-A diferencia de los sistemas por bloques, los sistemas de archivos por objetos gestionan los datos como "objetos", cada uno con un identificador único y metadatos que describen el contenido. 
+* Mejores Prácticas Utilizadas
+* Escalabilidad: El diseño del DFS se ha concebido para ser escalable, permitiendo la adición de nuevos Datanodes para aumentar la capacidad de almacenamiento y la distribución de la carga.
+* Tolerancia a Fallos: Se han implementado mecanismos de tolerancia a fallos para garantizar la disponibilidad y la integridad de los datos, como la replicación de particiones de archivos en múltiples Datanodes.
+* Optimización de Transferencia de Datos: Se ha optimizado el proceso de transferencia de datos mediante el acceso directo a los Datanodes, minimizando la latencia y maximizando el rendimiento del sistema.
 
-Estos sistemas utilizan una estructura plana de almacenamiento donde cada objeto es independiente. Los objetos incluyen datos y metadatos, permitiendo una gestión más flexible y eficiente. 
-
-* **Aplicaciones y Ejemplos**:
-    Almacenamiento de objetos en la nube (por ejemplo, Amazon S3, Google Cloud Storage).
-    Uso en sistemas de Big Data y análisis de datos distribuidos.
-
-### Comparación entre Sistemas por Bloques y por Objetos
-
-| Característica | Sistemas por Bloques	| Sistemas por Objetos |
-|----------------|----------------------|---------------------|
-| Modelo de datos | Organiza los datos en bloques de tamaño fijo  | Organiza los datos en objetos, cada uno con metadatos |
-| Escalabilidad	 | Escalabilidad vertical limitada	| Escalabilidad horizontal y vertical |
-| Latencia | Baja latencia en operaciones de lectura y escritura | Mayor latencia debido al acceso a través de metadatos |
-| Tamaño de archivo máximo | Limitado por el tamaño del bloque | No hay limitación en el tamaño de los objetos |
-| Operaciones | Eficiente para operaciones de lectura y escritura | Más eficiente para operaciones de lectura y objetos grandes |
-| Metadatos | 	Almacenados en un sistema de metadatos separado | Almacenados junto con el objeto en sí |
-| Consistencia | Mayor consistencia debido a la estructura de bloque | Puede haber mayor complejidad en la consistencia de datos |
-
-* **Sistemas por Bloques**:
-
-Son más apropiados cuando se requiere un acceso eficiente a datos secuenciales o cuando se trabaja con grandes volúmenes de datos que se leen o escriben en bloques.
-Se utilizan comúnmente en aplicaciones de análisis de datos como Hadoop, donde se procesan grandes conjuntos de datos distribuidos en clústeres.
-
-* **Sistemas por Objetos**:
-
-Son más adecuados para aplicaciones que requieren una alta escalabilidad y flexibilidad en el acceso a los datos, como el almacenamiento en la nube, servicios de CDN (Content Delivery Network) y sistemas de Big Data.
-Son ideales cuando se necesita almacenar grandes cantidades de datos no estructurados o semi-estructurados, como imágenes, videos, documentos y archivos de registro.
-
-### Glosario
-- **Sistema de Archivos Distribuido (DFS)**: Un sistema que permite el almacenamiento y acceso a archivos en múltiples servidores o nodos, mejorando la escalabilidad, confiabilidad y acceso concurrente a los datos.
-- **NFS (Network File System)**: Un protocolo de sistema de archivos distribuido desarrollado por Sun Microsystems para permitir el acceso a archivos sobre una red de manera transparente.
-- **AFS (Andrew File System)**: Un sistema de archivos distribuido que ofrece una gestión de archivos eficiente y segura, basada en un modelo de coherencia de caché.
-- **SMB (Server Message Block)**, también conocido como CIFS (Common Internet File System): Un protocolo de compartición de archivos que permite a los usuarios acceder a archivos o impresoras en redes locales o sobre Internet.
-- **Bloque**: La unidad de almacenamiento más pequeña en sistemas de archivos por bloques, que se distribuyen y replican a través de nodos en la red.
-- **Objeto**: En sistemas de archivos por objetos, representa una unidad de datos que incluye el propio dato y metadatos, y tiene un identificador único.
-- **NameNode**: En sistemas como HDFS, es el componente que gestiona el espacio de nombres del sistema de archivos y regula el acceso a los archivos por parte de los clientes.
-- **DataNode**: Componente que almacena datos en un sistema de archivos distribuido, como HDFS, trabajando bajo la coordinación del NameNode.
-- **Cliente**: Un usuario o aplicación que accede y opera sobre los archivos almacenados en el sistema de archivos distribuido.
-- **WORM (Write Once, Read Many)**: Un enfoque de almacenamiento que permite la escritura de datos una sola vez y la lectura múltiple de estos sin permitir modificaciones.
-- **API/SDK**: Conjunto de herramientas y protocolos que permiten la creación de aplicaciones que interactúan con el sistema de archivos distribuido.
-- **CLI (Interfaz de Línea de Comandos)**: Una interfaz de usuario que permite a los usuarios interactuar con el sistema operativo o so
----
-## Arquitectura
 ![ArquitecturaProyecto1](https://github.com/huparelaa/proyecto1-telematica/assets/81880485/03f2f639-53b2-454b-94f5-2f2f528bef76)
 
-### 1. **Cliente <-> NameNode**: 
- El cliente realiza una petición por medio de API REST al NameNode para poder obtener las direcciones en donde se encuentran los DataNodes para poder escribir un archivo, o para obtener las distintas particiones que puede tener un archivo.
+### 1. Plan de partición de archivos:
 
-### 2. **NameNode <-> NameNode**: 
+Para realizar la partición de archivos en bloques de tamaño 1 MB, utilizaremos un enfoque iterativo que divide el archivo en partes iguales del tamaño especificado. Estas partes serán nombradas como par000x, donde 'x' representa el número secuencial de la parte.
 
-Un NameNode escribe en otro NameNode a forma de copia de seguridad el archivo que se le subió a este para así tener una mejor tolerancia a fallos. Está comunicación será por medio de API REST.
+### 2.Mantenimiento de la red:
 
-### 3. **NameNode <-> DataNode**: 
+Utilizaremos Docker para crear contenedores independientes para cada uno de los servicios, como el NameNode y los DataNodes. 
 
-El NameNode indica al DataNode que archivos o particiones de estos tiene para que el NameNode le pueda proveer a los clients las direcciones en donde pueden subir o bien leer los archivos que buscan. Esta comunicación se hará por medio de API REST. 
+### 3.Mantenimiento del directorio:
 
-### 4. **DataNode <-> NameNode**:
+Crearemos un volumen en Docker para mantener el directorio compartido donde se almacenarán los bloques de archivos. Este volumen estará montado en cada uno de los contenedores para que puedan acceder y manipular los archivos de manera coherente.
+Transmisión y recepción de bloques reales vía gRPC entre el 
 
-El DataNode indicará al NameNode la lista de DataNodes que tienen el archivo particionado. Esta comunicación se hará por medio de API REST. 
+### 4.Cliente y los DataNodes:
 
-### 5. **Cliente <-> DataNode**:
-El cliente por medio de gRPC se comunica con el o los DataNodes indicados por el NameNode para realizar escritura o lectura de archivos según desee.
+Implementaremos transmisión y recepción de bloques reales entre el cliente y los DataNodes utilizando gRPC. Esto permitirá una comunicación eficiente y segura entre los distintos componentes del sistema distribuido.
 
-### 6. **DataNode <-> DataNode**:
+### 5.Estrategia de victoria temprana: transmisión y recepción en serie:
 
-Cuando un DataNode recibe un archivo de parte de un cliente aparte de almacenarlo en sí mismo realiza una réplica hacia otro DataNode del sistema para aumentar la tolerancia a fallos al tener varias copias de un mismo archivo en distintas ubicaciones
+Para maximizar la eficiencia de la transmisión y recepción de bloques, implementaremos un mecanismo de transmisión y recepción en serie en lugar de paralelo. Esto permitirá una mejor gestión de los recursos y evitará problemas de concurrencia.
 
-## Conclusiones
+## 3. Descripción del ambiente de desarrollo y técnico: lenguaje de programación, librerias, paquetes, etc, con sus numeros de versiones.
 
-En este estudio, hemos explorado dos tipos importantes de sistemas distribuidos de archivos: los sistemas por bloques y los sistemas por objetos. Al recapitular los puntos clave, se destaca que cada tipo de sistema tiene sus propias características distintivas, ventajas y desventajas.
+#### Namenode:
+- **Lenguaje de Programación:** Python
+- **Librerías y Paquetes:** Incluidas en el archivo requirements.txt de la carpeta `src/namenode/`
+- **Cómo Compilar y Ejecutar:**
+    - Se deben instalar las dependencias de src/namenode/requirements.txt
+    - Luego se debe correr el namenode con el comando `uvicorn Main:app --reload`
 
-Los sistemas por bloques son eficientes en el manejo de grandes volúmenes de datos que requieren un acceso secuencial y predecible. Son ideales para aplicaciones como el procesamiento de datos en clústeres y análisis de big data. Por otro lado, los sistemas por objetos ofrecen una mayor escalabilidad y flexibilidad en el acceso a los datos, lo que los hace más adecuados para aplicaciones en la nube, servicios de almacenamiento de objetos y distribución de contenido.
+#### Datanode:
+- **Lenguaje de Programación:** Python
+- **Librerías y Paquetes:** Incluidas en el archivo requirements.txt de la carpeta `src/datanode/`
+- **Cómo Compilar y Ejecutar:**
+    - Se deben instalar las dependencias de src/datanode/requirements.txt
+    - Luego se debe correr el namenode con el comando `python server.py` con lo que ya se conectará nuestro datanode al namenode
 
-La importancia de los sistemas distribuidos de archivos en la computación moderna es innegable. Permiten el almacenamiento y acceso eficiente a grandes cantidades de datos distribuidos en entornos heterogéneos y a través de redes de comunicación. Estos sistemas son la columna vertebral de muchas aplicaciones críticas, desde el análisis de big data hasta el almacenamiento de contenido multimedia en la nube, y su desarrollo continuo es esencial para satisfacer las crecientes demandas de la era digital.
+#### Client
+- **Lenguaje de Programación:** Python
+- **Librerías y Paquetes:** Incluidas en el archivo requirements.txt de la carpeta 'cli' 
+- **Cómo Compilar y Ejecutar:**
+    - Se deben instalar las dependencias de src/cli/src/requirements.txt
+    - Luego de eso configura la IP Y el puerto del NameNode, esto se encuentra en el .env, también puedes cambiar el tamaño de las particiones si lo deseas.
+    - Verás que dentro de la carpeta cli existe la carpeta 'uploads', dentro de esta se deben cargar los archivos que queremos enviar a nuestro sistema de archivos Hadoop.
+    - Luego navegar hasta src/cli/src y allí ejecutar el comando ```python client.py```.
+
+
+
+## Descripción y como se configura los parámetros del proyecto 
+
+* Para configurar los parámetros del proyecto se hace directamente desde el archivo .env
+
+## Detalles de la organización del código por carpetas o descripción de algún archivo. 
+```
+src
+│   ├── cli
+│   │   ├── downloads
+│   │   ├── src
+│   │   │   ├── client.py
+│   │   │   ├── commands
+│   │   │   │   ├── cli_commands.py
+│   │   │   │   └── __init__.py
+│   │   │   ├── connection
+│   │   │   │   ├── dataNodeConn.py
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── nameNodeConn.py
+│   │   │   ├── filetransfer_pb2_grpc.py
+│   │   │   ├── filetransfer_pb2.py
+│   │   │   ├── proto
+│   │   │   │   └── filetransfer.proto
+│   │   │   ├── README.md
+│   │   │   ├── requirements.txt
+│   │   │   ├── splits
+│   │   │   └── utils
+│   │   │       ├── filemanager.py
+│   │   │       └── __init__.py
+│   │   └── uploads
+│   ├── dataNode
+│   │   ├── dockerfile
+│   │   ├── files
+│   │   ├── filetransfer
+│   │   │   ├── FileTransferServicer.py
+│   │   │   ├── __init__.py
+│   │   │   ├── replication.py
+|   │   │   └── servicer.py
+│   │   ├── filetransfer_pb2_grpc.py
+│   │   ├── filetransfer_pb2.py
+│   │   ├── protos
+│   │   │   ├── filetransfer.proto
+│   │   │   └── __init__.py
+│   │   ├── README.md
+│   │   ├── requirements.txt
+│   │   ├── server.py
+│   │   ├── services
+│   │   │   ├── auth.py
+│   │   │   ├── handshake.py
+│   │   │   ├── __init__.py
+│   │   │   └── scheduler.py
+│   │   └── utils
+│   │       ├── heartbeat.py
+│   │       ├── __init__.py
+│   │       └── utils.py
+│   └── namenode
+│       ├── DirectoryTree.py
+│       ├── dockerfile
+│       ├── editlog.txt
+│       ├── fsimage
+│       │   └── fsimage.json
+│       ├── Main.py
+│       ├── NameNode.py
+│       ├── README.md
+│       ├── requirements.txt
+│       └── schemas
+│           ├── fileName.py
+│           ├── fileWriteRequest.py
+│           ├── handshake.py
+│           ├── heartbeat.py
+│           ├── __init__.py
+│           └── routeRequest.py
+└──
+``` 
+
+## 4. Descripción del ambiente de EJECUCIÓN (en producción) lenguaje de programación, librerias, paquetes, etc, con sus numeros de versiones.
+
+Se utilizó Docker para contenerizar el namenode y los diferentes datanodes. Además se crean volumenes para persistir los datos de los bloques en el sistema de archivos de la VM.
+
+## IP o nombres de dominio en nube o en la máquina servidor.
+
+
+Aquí tenemos el namenode que registra todos los moviemientos de los usuarios en el sistema de archivos distribuido. Tenemos tres datanodes que nos permiiten almacenar los bloques correspondientes con un factor de replicación de 3.
+
+## Descripción y como se configura los parámetros del proyecto (ej: ip, puertos, conexión a bases de datos, variables de ambiente, parámetros, etc)
+
+**Antes de iniciar con este proceso, confirmar si en cada una de las maquinas virtuales se tiene docker**
+
+Para el cliente se debe cambiar la IP que se está utilizando para el namenode, por ejemplo:
+
+```bash
+NAMENODE_IP="127.0.0.1"
+NAMENODE_PORT="8000"
+BLOCK_SIZE="1048576" #1 MB
+#BLOCK_SIZE="134217728" #128 MB
+```
+
+En este apartado, para el namenode debemos configurar lo siguiente: 
+
+```yml
+ services:
+  namenode:
+    image: julianv08/proyecto1-telematica-namenode
+    container_name: namenode
+    ports:
+      - "8000:8000"
+    volumes:
+      - /home/user/namenode/fsimage/fsimage.json:/app/fsimage/fsimage.json
+      - /home/user/namenode/editlog.txt:/app/editlog.txt
+```
+
+Se puede personalizar el puerto deseado y la ruta donde se creará el volumen en la maquina host del contendor.
+
+**Se recomienda el uso de IP elastica para el namenode**
+
+Para el datanode: 
+
+
+```yml
+services:
+   datanode:
+    image: julianv08/proyecto1-telematica-datanode
+    ports:
+      - "50051:50051"  # You can change the ports as needed
+    environment:
+      - NAMENODE_IP=127.0.0.0
+      - NAMENODE_PORT=8000
+      - MY_IP=127.0.0.1
+    volumes:
+      - /home/jdvalencir/datanode1:/app/files
+```
+
+Aquí demos de configurar las variables de entorno con los valores adecuados.
+
+### 1. **¿Cómo se lanza el namenode?**:
+
+El namenode, en un entorno de producción se lanza con el siguiente comando: 
+
+```bash
+sudo docker compose up 
+```
+
+
+### 2. **¿Cómo se lanza el datanode?**:
+
+```bash
+sudo docker compose up 
+```
+
+Con esta implementación nos aseguramos un fácil y rápido despliegue. Con esta implementación podemos asegurarnos de lanzar tantos datanodes como se requieran.
+
+#### 1. Asegurarse que el namenode y los datanodes estén funcionando de manera adecuada
+
+#### 2. Se debe encender el cliente para interacturar con el sistemas de archivos distribuido.
+
+#### 3. Con está cuestión activada, podemos realizar las siguientes operaciones: 
+
+* **ls:** Lista archivos y directorios en nuestra ruta actual.
+* **mkdir:** Crea una nueva carpeta en la ruta donde estamos.
+* **cd:** Permite navegar entre directorios, para usarlo debes escribir `cd folder` o si quieres retroceder `cd ..`
+* **write:** Sube un archivo de la carpeta uploads al sistema de archivos Hajoop además de que lo registra en el directorio del namenode para posteriormente poder descargar este archivo.
+* **read:** Lee el archivo en el directorio actual y guarda el archivo ya restaurado en la carpeta `downloads`.
+* **clear:** Limpia la terminal
+
+## Resultados o pantallazos 
+
+* Video que muestra como se ejecuta el software: https://youtu.be/93eSnqCkI-U
+
 
 ### Referencias
-* [Google File System
-](https://es.wikipedia.org/wiki/Google_File_System)
-* [Hadoop Distributed File System
-](https://es.wikipedia.org/wiki/Hadoop_Distributed_File_System)
-* The Google File System - Sanjay Ghemawat, Howard Gobioff & Shun-Tak Leung
-* The Hadoop Distributed File System - Konstantin Shvachko, Hairong Kuang, Sanjay Radia, Robert Chansler
+* [Google File System](https://es.wikipedia.org/wiki/Google_File_System)
+* [Hadoop Distributed File System](https://es.wikipedia.org/wiki/Hadoop_Distributed_File_System)
+* **The Google File System - Sanjay Ghemawat, Howard Gobioff & Shun-Tak Leung**
+* **The Hadoop Distributed File System - Konstantin Shvachko, Hairong Kuang, Sanjay Radia, Robert Chansler**
