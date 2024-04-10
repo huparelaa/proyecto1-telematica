@@ -176,6 +176,7 @@ Se utilizó Docker para contenerizar el namenode y los diferentes datanodes. Ade
 
 ## IP o nombres de dominio en nube o en la máquina servidor.
 
+![Screenshot from 2024-04-09 23-41-31](https://github.com/huparelaa/proyecto1-telematica/assets/88250984/8ac1241b-2cc6-494e-a1f5-2ab02af1e7a5)
 
 Aquí tenemos el namenode que registra todos los moviemientos de los usuarios en el sistema de archivos distribuido. Tenemos tres datanodes que nos permiiten almacenar los bloques correspondientes con un factor de replicación de 3.
 
