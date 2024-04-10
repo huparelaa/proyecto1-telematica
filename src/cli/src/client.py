@@ -7,7 +7,7 @@ def main():
     os.system("clear")
     username = login()
     my_route = f"/{username}/"
-    print("Welcome to the Hadoop File System")
+    print("Welcome to the Hajoop File System")
     print("Type 'help' to see the available commands")
     while True:
         command = input(f"\033[92m{my_route}$ \033[0m")
