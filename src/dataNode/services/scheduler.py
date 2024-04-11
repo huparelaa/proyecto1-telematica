@@ -58,4 +58,8 @@ def manageHeartbeatResponse(response):
                 data_node_address = data_node["data_node_address"]
                 sendFileToDataNode(file_path, data_node_address)
             print("File replicated")
+        if response["command"] == "delete":
+            file_path = response["file_path"]
+            os.remove(f"./files/{file_path}")
+            print("File deleted")
         data_node_status = "active"
