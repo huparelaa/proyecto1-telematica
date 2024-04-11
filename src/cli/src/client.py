@@ -1,7 +1,7 @@
-from commands.cli_commands import ls, cd, mkdir, write, read
+from commands.cli_commands import ls, cd, mkdir, write, read, append
 import os
 
-AVAILABLE_COMMANDS = ["ls", "mkdir", "cd","clear", "exit", "help", "write", "read"]
+AVAILABLE_COMMANDS = ["ls", "mkdir", "cd","clear", "exit", "help", "write", "read","append"]
 
 def main():
     os.system("clear")
@@ -54,6 +54,11 @@ def main():
                 print("Usage: read <file_name>")
             else:
                 read(my_route, command[1])
+        elif command[0] == "append":
+            if len(command) != 2:
+                print("Usage: append <file_name>")
+            else:
+                append(my_route, command[1])
         else:
             print(f"Command not found {command[0]}")
 

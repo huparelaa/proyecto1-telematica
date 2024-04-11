@@ -52,3 +52,30 @@ def send_confirmation_to_namenode(file_name, file_path):
     except requests.exceptions.RequestException as e:
         print("No such file or directory")
         raise e
+    
+def get_datanode_address_append(file_name, file_path, block_num):
+    data = {
+        "file_name": file_name,
+        "file_path": file_path,
+        "block_num": block_num
+     } 
+    try: 
+        response = requests.post(f"http://{name_node_ip}:{name_node_port}/namenode/api/v1/datanode_append_list/", json=data)
+        response.raise_for_status()
+        json_response = response.json()
+        if "dataNodesAvailable" in json_response:
+            return json_response["dataNodesAvailable"]
+        else:
+            return None
+    except requests.exceptions.RequestException as e:
+        return None
+    
+def get_datanode_address_append_dummy_response():
+    response = {
+        "dataNodesAvailable": {
+            "r1ck.mp4-_-part0020": [
+                "127.0.0.1:50051"
+            ]
+        }
+    }
+    return response["dataNodesAvailable"]

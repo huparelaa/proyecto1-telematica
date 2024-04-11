@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 import requests
 from utils.filemanager import split_file, join_files
-from connection.nameNodeConn import get_datanode_address, get_datanode_address_read, send_confirmation_to_namenode
+from connection.nameNodeConn import get_datanode_address, get_datanode_address_read, send_confirmation_to_namenode, get_datanode_address_append_dummy_response, get_datanode_address_append
 from connection.dataNodeConn import send_file_to_datanode, download_file_from_datanode, delete_splits
 
 load_dotenv()
@@ -69,6 +69,7 @@ def write(my_route, file_name):
             # Address example: "hobar.mp3-_-part0020": ["192.168.1.15:50051"]
             full_file_name = f"{file_name}-_-part{i+1:04d}"
             adress = adresses[full_file_name][0]
+            print(f"Sending {full_file_name} to {adress}")
             send_file_to_datanode(route=route, data_node_address=adress, file_name=full_file_name)
         delete_splits("uploads")
         send_confirmation_to_namenode(file_name, my_route)
@@ -76,7 +77,27 @@ def write(my_route, file_name):
         
     except Exception as e:
         return
-    
+
+def append(my_route, file_name):
+    try:
+        block_num = split_file(f"../uploads/{file_name}")
+        route = f"{my_route}{file_name}/"
+        
+        adresses = get_datanode_address_append(file_name, my_route, block_num)
+        if adresses == "File already exists":
+            return
+        if not adresses:
+            return print("No Data Nodes available") 
+        
+        for file in adresses.keys():
+            adress = adresses[file][0]
+            print(f"Sending {file} to {adress}")
+            send_file_to_datanode(route=route, data_node_address=adress, file_name=file)
+        
+    except Exception as e:
+        print("File not found")
+        return    
+
 def read(my_route, file_name):
     try:
         addresses = get_datanode_address_read(file_name, my_route)
